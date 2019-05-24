@@ -9,7 +9,7 @@ const createElement = (type, props = null, children = null) => ({
 });
 
 // vnode: string | vnode
-const render = vnode => {
+const renderDom = vnode => {
   console.log('in render', vnode);
   // Strings just convert to #text Nodes:
   if (typeof vnode === 'string') {
@@ -22,44 +22,39 @@ const render = vnode => {
   // copy attributes onto the new node:
   const props = vnode.props || {};
   Object.keys(props).forEach(k => n.setAttribute(k, props[k]));
-
-  // render (build) and then append child nodes:
-  //(vnode.children || []).forEach(child => n.appendChild(render(child)));
   
   return n;
 }
 
-const renderVDOM = vnode => {
+const render = vnode => {
   console.log('entering RENDER', vnode);
   
-  //text node
   if (typeof vnode === 'string') {
-    return render(vnode);
-  //html node
+    // text node
+    return renderDom(vnode);
   } else if (typeof vnode.type === 'string') {
-    vnode._render = () => render(vnode);
-  } else {
-  //react element
+    // html node
+    vnode._render = () => renderDom(vnode);
+  } else if (Component.isPrototypeOf(vnode.type)) {
+    // react element
     if (!vnode._inst) {
       vnode._inst = new vnode.type(vnode.props);
     }
-    
-    vnode._render = () => {
-      console.log('_render', vnode._inst.render());
-      //renderVDOM(vnode._inst.render());
-      return renderVDOM(vnode._inst.render());
-    }
+    vnode._render = () => render(vnode._inst.render());
+  } else if (typeof vnode.type === 'function') {
+    // functional component
+    return render(vnode.type(vnode.props));
+  } else {
+    throw 'Unknown component';
   }
 
   const n = vnode._render();
-  vnode.children.forEach(child => n.appendChild(renderVDOM(child)));
-
-  console.log(n);
+  vnode.children.forEach(child => n.appendChild(render(child)));
   return n;
 }
 
 const mount = (root, vnode) => {
-  root.appendChild(renderVDOM(vnode));
+  root.appendChild(render(vnode));
 };
 
 class Component {
@@ -71,6 +66,7 @@ class Component {
   setState = (state, callbackFn) => {
     this.state = state;
     callbackFn();
+    
   }
   render() {
 
@@ -82,7 +78,6 @@ class Header extends Component {
     return createElement('div', { class: "Header" }, this.props.name);
   }
 }
-
 
 /*
 const tree = createElement('div', { style: "background: red;" }, [
@@ -96,5 +91,5 @@ const tree = createElement(Header, {name: "hey"});
 console.log(tree);
 
 // bootstrap
-const root = document.getElementById('root');
+const root = document.getElementById('app');
 mount(root, tree);
