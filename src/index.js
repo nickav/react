@@ -1,11 +1,8 @@
-const coerceArray = (obj) =>
-  (Array.isArray(obj) ? obj : [obj]).filter((e) => e);
-
 // returns a vnode
-const createElement = (type, props = null, children = null) => ({
+const createElement = (type, props = null, ...children) => ({
   type,
   props,
-  children: coerceArray(children)
+  children: [].concat(...children) || null
 });
 
 // vnode: string | vnode
@@ -28,29 +25,28 @@ const renderDom = vnode => {
 
 const render = vnode => {
   console.log('entering RENDER', vnode);
-  
-  if (typeof vnode === 'string') {
+  if (vnode === null) {
+    return;
+  } else if (typeof vnode === 'string'|| typeof vnode === 'number' || typeof vnode === 'boolean') {
     // text node
-    return renderDom(vnode);
+    return renderDom(vnode.toString());
   } else if (typeof vnode.type === 'string') {
     // html node
-    vnode._render = () => renderDom(vnode);
+    const n = renderDom(vnode);
+    vnode.children.forEach(child => n.appendChild(render(child)));
+    return n;
   } else if (Component.isPrototypeOf(vnode.type)) {
     // react element
     if (!vnode._inst) {
-      vnode._inst = new vnode.type(vnode.props);
+      vnode._inst = new vnode.type({ ...vnode.props, children: vnode.children });
     }
-    vnode._render = () => render(vnode._inst.render());
+    return render(vnode._inst.render());
   } else if (typeof vnode.type === 'function') {
     // functional component
-    return render(vnode.type(vnode.props));
+    return render(vnode.type({ ...vnode.props, children: vnode.children }));
   } else {
-    throw 'Unknown component';
+    throw `Unknown component: ${vnode}`;
   }
-
-  const n = vnode._render();
-  vnode.children.forEach(child => n.appendChild(render(child)));
-  return n;
 }
 
 const mount = (root, vnode) => {
@@ -68,6 +64,7 @@ class Component {
     callbackFn();
     
   }
+
   render() {
 
   }
@@ -75,7 +72,7 @@ class Component {
 
 class Header extends Component {
   render() {
-    return createElement('div', { class: "Header" }, this.props.name);
+    return createElement('div', { class: "Header" }, this.props.children);
   }
 }
 
@@ -86,7 +83,9 @@ const tree = createElement('div', { style: "background: red;" }, [
 ]);
 */
 
-const tree = createElement(Header, {name: "hey"});
+const Title = () => createElement('div', { class: 'title' }, 'title')
+
+const tree = createElement(Header, {name: "hey"}, [createElement(Title, null, 'child')]);
 
 console.log(tree);
 
