@@ -5,8 +5,42 @@ const createElement = (type, props = null, ...children) => ({
   children: [].concat(...children) || null,
 });
 
+const getComponentProps = (vnode) => ({
+  ...vnode.props,
+  children: vnode.children || props.children,
+});
+
+const render = (vnode, renderNode) => {
+  if (vnode === null) {
+    // empty node
+    return;
+  } else if (
+    typeof vnode === 'string' ||
+    typeof vnode === 'number' ||
+    typeof vnode === 'boolean'
+  ) {
+    // text node
+    return renderNode(vnode.toString(), render);
+  } else if (typeof vnode.type === 'string') {
+    // html node
+    return renderNode(vnode, render);
+  } else if (Component.isPrototypeOf(vnode.type)) {
+    // react element
+    if (!vnode._inst) {
+      vnode._inst = new vnode.type(getComponentProps(vnode));
+    }
+    const { _inst, props, state } = vnode;
+    return render(_inst.render(props, state), renderNode);
+  } else if (typeof vnode.type === 'function') {
+    // functional component
+    return render(vnode.type(getComponentProps(vnode)), renderNode);
+  } else {
+    throw `Unknown component: ${vnode}`;
+  }
+};
+
 // vnode: string | vnode
-const renderDOM = (vnode) => {
+const renderDOM = (vnode, render) => {
   // Strings just convert to #text Nodes:
   if (typeof vnode === 'string') {
     return document.createTextNode(vnode);
@@ -19,44 +53,14 @@ const renderDOM = (vnode) => {
   const props = vnode.props || {};
   Object.keys(props).forEach((k) => n.setAttribute(k, props[k]));
 
+  // render children
+  vnode.children.forEach((child) => n.appendChild(render(child, renderDOM)));
+
   return n;
 };
 
-const render = (vnode) => {
-  if (vnode === null) {
-    return;
-  } else if (
-    typeof vnode === 'string' ||
-    typeof vnode === 'number' ||
-    typeof vnode === 'boolean'
-  ) {
-    // text node
-    return renderDOM(vnode.toString());
-  } else if (typeof vnode.type === 'string') {
-    // html node
-    const n = renderDOM(vnode);
-    vnode.children.forEach((child) => n.appendChild(render(child)));
-    return n;
-  } else if (Component.isPrototypeOf(vnode.type)) {
-    // react element
-    if (!vnode._inst) {
-      vnode._inst = new vnode.type({
-        ...vnode.props,
-        children: vnode.children,
-      });
-    }
-    const { _inst, props, state } = vnode;
-    return render(_inst.render(props, state));
-  } else if (typeof vnode.type === 'function') {
-    // functional component
-    return render(vnode.type({ ...vnode.props, children: vnode.children }));
-  } else {
-    throw `Unknown component: ${vnode}`;
-  }
-};
-
 const mount = (root, vnode) => {
-  root.appendChild(render(vnode));
+  root.appendChild(render(vnode, renderDOM));
 };
 
 class Component {
@@ -70,8 +74,12 @@ class Component {
     callbackFn();
   };
 
+  forceUpdate = () => {};
+
   render() {}
 }
+
+// test
 
 class Header extends Component {
   render() {
