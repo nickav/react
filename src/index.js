@@ -11,32 +11,41 @@ const getComponentProps = (vnode) => ({
 });
 
 const render = (vnode, renderNode) => {
+  // empty node
   if (vnode === null) {
-    // empty node
     return;
-  } else if (
+  }
+
+  // text node
+  if (
     typeof vnode === 'string' ||
     typeof vnode === 'number' ||
     typeof vnode === 'boolean'
   ) {
-    // text node
     return renderNode(vnode.toString(), render);
-  } else if (typeof vnode.type === 'string') {
-    // html node
+  }
+
+  // html node
+  if (typeof vnode.type === 'string') {
     return renderNode(vnode, render);
-  } else if (Component.isPrototypeOf(vnode.type)) {
-    // react element
+  }
+
+  // react element
+  if (Component.isPrototypeOf(vnode.type)) {
     if (!vnode._inst) {
       vnode._inst = new vnode.type(getComponentProps(vnode));
     }
+
     const { _inst, props, state } = vnode;
     return render(_inst.render(props, state), renderNode);
-  } else if (typeof vnode.type === 'function') {
-    // functional component
-    return render(vnode.type(getComponentProps(vnode)), renderNode);
-  } else {
-    throw `Unknown component: ${vnode}`;
   }
+
+  // functional component
+  if (typeof vnode.type === 'function') {
+    return render(vnode.type(getComponentProps(vnode)), renderNode);
+  }
+
+  throw `Unknown component: ${vnode}`;
 };
 
 // vnode: string | vnode
