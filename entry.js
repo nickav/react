@@ -14,6 +14,7 @@ class Ticker extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log('unmounting!!!!!!!');
     clearInterval(this.interval);
     this.interval = null;
   }
@@ -27,13 +28,23 @@ class Ticker extends React.Component {
   }
 }
 
-const tree = (
-  <div style="background: red;">
-    <Ticker />
+class App extends React.Component {
+  state = { hide: false };
+
+  componentDidMount() {
+    setTimeout(() => this.setState({ hide: true }), 200);
+  }
+
+  render(_, { hide }) {
+    return <div style="background: red;">
+    {!hide && <Ticker />}
     {null}
     <div>hello</div>
   </div>
-);
+  }
+}
+
+const tree = <App />;
 
 //const Title = () => createElement('div', { class: 'title' }, 'title');
 
@@ -44,3 +55,5 @@ console.log(tree);
 // bootstrap
 const root = document.getElementById('app');
 mount(root, tree);
+
+window.tree = tree;

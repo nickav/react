@@ -1,4 +1,5 @@
 import Component from './Component';
+import { create } from 'domain';
 
 export { Component };
 
@@ -16,16 +17,12 @@ export const getComponentProps = (vnode) => ({
 
 export const render = (vnode, renderNode) => {
   // empty node
-  if (vnode === null) {
-    return;
+  if (vnode === null || typeof vnode === 'boolean') {
+    return vnode;
   }
 
   // text node
-  if (
-    typeof vnode === 'string' ||
-    typeof vnode === 'number' ||
-    typeof vnode === 'boolean'
-  ) {
+  if (typeof vnode === 'string' || typeof vnode === 'number') {
     return renderNode(vnode.toString(), render);
   }
 
@@ -36,17 +33,23 @@ export const render = (vnode, renderNode) => {
 
   // react element
   if (Component.isPrototypeOf(vnode.type)) {
+    // create the component (if needed)
     if (!vnode._inst) {
       vnode._inst = new vnode.type(getComponentProps(vnode));
       vnode._inst._vnode = vnode;
       vnode._render = (vnode) => render(vnode, renderNode);
     }
 
+    // do the render
     const { _inst, props } = vnode;
     _inst.componentWillMount();
-    const html = render(_inst.render(props, _inst.state), renderNode);
-    setTimeout(() => _inst.componentDidMount(), 0);
+
+    const nextVNode = _inst.render(props, _inst.state);
+    const html = render(nextVNode, renderNode);
+    vnode._prevVNode = nextVNode;
     vnode._root = html;
+    
+    setTimeout(() => _inst.componentDidMount(), 0);
     return html;
   }
 
@@ -58,7 +61,15 @@ export const render = (vnode, renderNode) => {
   throw `Unknown component: ${vnode}`;
 };
 
-//export default { createElement, Component, };
+// 'hey' => string.0
+// 'there' => string.0
+import diffTree from './diff-tree';
+const t1 = createElement('div', null, [ createElement('header') ]);
+const t2 = createElement('div', null, [ createElement('div') ]);
+
+console.log(
+  diffTree(t1, t2)
+);
 
 // vnode: string | vnode
 export const renderDOM = (vnode, render) => {
@@ -76,7 +87,7 @@ export const renderDOM = (vnode, render) => {
 
   // render children
   vnode.children.forEach((child) =>
-    n.appendChild(render(child, renderDOM) || document.createComment('null'))
+    n.appendChild(render(child, renderDOM) || document.createComment(child))
   );
 
   return n;
