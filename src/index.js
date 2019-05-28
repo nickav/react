@@ -1,16 +1,20 @@
+import Component from './Component';
+
+export { Component };
+
 // returns a vnode
-const createElement = (type, props = null, ...children) => ({
+export const createElement = (type, props = null, ...children) => ({
   type,
   props,
   children: [].concat(...children) || null,
 });
 
-const getComponentProps = (vnode) => ({
+export const getComponentProps = (vnode) => ({
   ...vnode.props,
   children: vnode.children || props.children,
 });
 
-const render = (vnode, renderNode) => {
+export const render = (vnode, renderNode) => {
   // empty node
   if (vnode === null) {
     return;
@@ -53,7 +57,7 @@ const render = (vnode, renderNode) => {
 };
 
 // vnode: string | vnode
-const renderDOM = (vnode, render) => {
+export const renderDOM = (vnode, render) => {
   // Strings just convert to #text Nodes:
   if (typeof vnode === 'string') {
     return document.createTextNode(vnode);
@@ -72,64 +76,6 @@ const renderDOM = (vnode, render) => {
   return n;
 };
 
-const mount = (root, vnode) => {
+export const mount = (root, vnode) => {
   root.appendChild(render(vnode, renderDOM));
 };
-
-class Component {
-  constructor(props) {
-    this.props = props || {};
-    this.state = {};
-  }
-
-  setState = (state, callbackFn) => {
-    this.state = state;
-    this.forceUpdate();
-    callbackFn && callbackFn();
-  };
-
-  forceUpdate = () => {
-    const newElem = this._vnode._render(this.render(this.props, this.state));
-    this._vnode._root.replaceWith(newElem);
-    this._vnode._root = newElem;
-  };
-
-  render() {}
-}
-
-// test
-
-class Ticker extends Component {
-  constructor(props) {
-    super(props);
-    
-    this.state = { counter: 0 };
-    //setTimeout(this.tick, 0);
-    setInterval(this.tick, 1000);
-  }
-
-  tick = () => {
-    this.setState({ counter: this.state.counter + 1 });
-  };
-
-  render() {
-    return createElement('div', { class: 'Ticker' }, this.state.counter);
-  }
-}
-
-/*
-const tree = createElement('div', { style: "background: red;" }, [
-  createElement(Header, null, 'hello world'),
-  createElement(Header, null, 'hello there'),
-]);
-*/
-
-//const Title = () => createElement('div', { class: 'title' }, 'title');
-
-const tree = createElement(Ticker);
-
-console.log(tree);
-
-// bootstrap
-const root = document.getElementById('app');
-mount(root, tree);
