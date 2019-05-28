@@ -1,9 +1,10 @@
-import { mount, createElement, Component } from './src';
+import * as React from 'react';
+import { createElement, mount } from 'react';
 
-class Ticker extends Component {
+class Ticker extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = { counter: 0 };
     //setTimeout(this.tick, 0);
     setInterval(this.tick, 1000);
@@ -14,16 +15,17 @@ class Ticker extends Component {
   };
 
   render() {
-    return createElement('div', { class: 'Ticker' }, new Date().toLocaleString());
+    return <div class="Ticker">{new Date().toLocaleString()}</div>;
   }
 }
 
-const tree = createElement('div', { style: "background: red;" }, [
-  createElement(Ticker),
-  createElement(Ticker),
-  createElement('div', null, "div")
-]);
-
+const tree = (
+  <div style="background: red;">
+    <Ticker />
+    <Ticker />
+    <div>hello</div>
+  </div>
+);
 
 //const Title = () => createElement('div', { class: 'title' }, 'title');
 

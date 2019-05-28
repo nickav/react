@@ -56,6 +56,8 @@ export const render = (vnode, renderNode) => {
   throw `Unknown component: ${vnode}`;
 };
 
+//export default { createElement, Component, };
+
 // vnode: string | vnode
 export const renderDOM = (vnode, render) => {
   // Strings just convert to #text Nodes:
