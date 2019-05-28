@@ -43,7 +43,9 @@ export const render = (vnode, renderNode) => {
     }
 
     const { _inst, props } = vnode;
+    _inst.componentWillMount();
     const html = render(_inst.render(props, _inst.state), renderNode);
+    setTimeout(() => _inst.componentDidMount(), 0);
     vnode._root = html;
     return html;
   }
@@ -73,11 +75,14 @@ export const renderDOM = (vnode, render) => {
   Object.keys(props).forEach((k) => n.setAttribute(k, props[k]));
 
   // render children
-  vnode.children.forEach((child) => n.appendChild(render(child, renderDOM)));
+  vnode.children.forEach((child) =>
+    n.appendChild(render(child, renderDOM) || document.createComment('null'))
+  );
 
   return n;
 };
 
 export const mount = (root, vnode) => {
   root.appendChild(render(vnode, renderDOM));
+  // didMounts
 };

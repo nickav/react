@@ -16,5 +16,9 @@ export default class Component {
     this._vnode._root = newElem;
   };
 
+  componentWillMount() {}
+  componentDidMount() {}
+  componentWillUnmount() {}
+
   render() {}
 }

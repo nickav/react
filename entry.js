@@ -2,12 +2,20 @@ import * as React from 'react';
 import { createElement, mount } from 'react';
 
 class Ticker extends React.Component {
-  constructor(props) {
-    super(props);
+  state = { counter: 0 };
+  
+  componentWillMount() {
+    console.log('will mount...', this._vnode._root);
+    this.interval = setInterval(this.tick, 1000);
+  }
 
-    this.state = { counter: 0 };
-    //setTimeout(this.tick, 0);
-    setInterval(this.tick, 1000);
+  componentDidMount() {
+    console.log('mounted!', this._vnode._root);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+    this.interval = null;
   }
 
   tick = () => {
@@ -22,7 +30,7 @@ class Ticker extends React.Component {
 const tree = (
   <div style="background: red;">
     <Ticker />
-    <Ticker />
+    {null}
     <div>hello</div>
   </div>
 );
