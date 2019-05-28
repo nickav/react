@@ -34,10 +34,14 @@ const render = (vnode, renderNode) => {
   if (Component.isPrototypeOf(vnode.type)) {
     if (!vnode._inst) {
       vnode._inst = new vnode.type(getComponentProps(vnode));
+      vnode._inst._vnode = vnode;
+      vnode._render = (vnode) => render(vnode, renderNode);
     }
 
-    const { _inst, props, state } = vnode;
-    return render(_inst.render(props, state), renderNode);
+    const { _inst, props } = vnode;
+    const html = render(_inst.render(props, _inst.state), renderNode);
+    vnode._root = html;
+    return html;
   }
 
   // functional component
@@ -80,19 +84,36 @@ class Component {
 
   setState = (state, callbackFn) => {
     this.state = state;
-    callbackFn();
+    this.forceUpdate();
+    callbackFn && callbackFn();
   };
 
-  forceUpdate = () => {};
+  forceUpdate = () => {
+    const newElem = this._vnode._render(this.render(this.props, this.state));
+    this._vnode._root.replaceWith(newElem);
+    this._vnode._root = newElem;
+  };
 
   render() {}
 }
 
 // test
 
-class Header extends Component {
+class Ticker extends Component {
+  constructor(props) {
+    super(props);
+    
+    this.state = { counter: 0 };
+    //setTimeout(this.tick, 0);
+    setInterval(this.tick, 1000);
+  }
+
+  tick = () => {
+    this.setState({ counter: this.state.counter + 1 });
+  };
+
   render() {
-    return createElement('div', { class: 'Header' }, this.props.children);
+    return createElement('div', { class: 'Ticker' }, this.state.counter);
   }
 }
 
@@ -103,11 +124,9 @@ const tree = createElement('div', { style: "background: red;" }, [
 ]);
 */
 
-const Title = () => createElement('div', { class: 'title' }, 'title');
+//const Title = () => createElement('div', { class: 'title' }, 'title');
 
-const tree = createElement(Header, { name: 'hey' }, [
-  createElement(Title, null, 'child'),
-]);
+const tree = createElement(Ticker);
 
 console.log(tree);
 
