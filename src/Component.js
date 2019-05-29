@@ -1,24 +1,30 @@
-import diffTree from './diff-tree';
+import reconcileTree from './reconcile-tree';
 
 export default class Component {
   constructor(props) {
     this.props = props || {};
     this.state = {};
+    this._vnode = null;
   }
 
   setState = (state, callbackFn) => {
     this.state = state;
-    this.forceUpdate();
+
+    if (this.shouldComponentUpdate(this.props, state)) {
+      this.forceUpdate();
+    }
+
     callbackFn && callbackFn();
   };
 
   forceUpdate = () => {
     const nextVNode = this.render(this.props, this.state);
     nextVNode._root = this._vnode._root;
-    diffTree(nextVNode, this._vnode._prevVNode);
+    reconcileTree(nextVNode, this._vnode._prevVNode);
     this._vnode._prevVNode = nextVNode;
   };
 
+  // lifecycle methods
   componentWillMount() {}
   componentDidMount() {}
   componentWillUnmount() {}

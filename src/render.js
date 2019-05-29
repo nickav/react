@@ -5,6 +5,7 @@ export const getComponentProps = (vnode) => ({
   children: vnode.children || props.children,
 });
 
+// vnode -> renderNode
 export const renderVNode = (vnode, renderNode) => {
   // empty node
   if (vnode === null || typeof vnode === 'boolean') {
@@ -45,16 +46,16 @@ export const renderVNode = (vnode, renderNode) => {
   throw `Unknown component: ${vnode}`;
 };
 
-// vnode: string | vnode
+// vnode -> DOM Element
 export const renderDOM = (vnode, render) => {
-  // Strings just convert to #text Nodes:
-  if (typeof vnode === 'string') {
-    return document.createTextNode(vnode);
+  // null and boolean are just comments (for debugging)
+  if (vnode === null || typeof vnode === 'boolean') {
+    return document.createComment(`(${vnode})`);
   }
 
-  // Null and boolean are just comments (for debugging)
-  if (vnode === null || typeof vnode === 'boolean') {
-    return document.createComment(` ${vnode} `);
+  // strings just convert to #text nodes
+  if (typeof vnode === 'string') {
+    return document.createTextNode(vnode);
   }
 
   // create a DOM element with the nodeName of our VDOM element:

@@ -36,6 +36,8 @@ class Ticker extends React.Component {
   }
 }
 
+// test
+
 class Title extends React.Component {
   componentWillMount() {
     console.log('MOUNTING Text');
@@ -49,10 +51,6 @@ class Title extends React.Component {
 class Header extends React.Component {
   componentWillMount() {
     console.log('MOUNTING Header');
-  }
-
-  componentDidMount() {
-    console.log('header mounted');
   }
 
   render() {
@@ -70,17 +68,14 @@ class App extends React.Component {
 
   componentDidMount() {
     setTimeout(() => this.setState({ hide: true }), 200);
-    //setTimeout(() => this.setState({ hide: false }), 400);
   }
 
   render(_, { hide }) {
-    console.log('App render!', this.state);
     return (
-      <div style="background: red;">
-        {!hide && <div>Hi</div>}
-        <Header title={hide ? 'hidden' : 'visible'} />
-        {null}
+      <div class="App" style="background: red;">
         {hide && <div>Hello!</div>}
+        <Header title={hide ? 'hidden' : 'visible'} />
+        {!hide ? <div>Hi</div> : null}
       </div>
     );
   }

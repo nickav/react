@@ -1,18 +1,22 @@
 import { renderVNode, renderDOM } from './render';
 
-const computeKey = (vnode, i) =>
-  (vnode && vnode.props && vnode.props.key) ||
-  `${((vnode || {}).type || {}).name ||
-    (vnode || {}).type ||
-    typeof vnode}.${i}`;
+const computeKey = (vnode, i) => {
+  if (vnode && vnode.props && vnode.props.key) {
+    return vnode.props.key;
+  }
+
+  return `${
+    vnode && vnode.type ? vnode.type.name || vnode.type : typeof vnode
+  }.${i}`;
+};
 
 const computeChildKeyMap = (arr) =>
   arr.reduce(
-    (memo, child, i) => ((memo[child && computeKey(child, i)] = child), memo),
+    (memo, child, i) => ((memo[computeKey(child, i)] = child), memo),
     {}
   );
 
-const diffTree = (nextVNode, prevVNode = {}) => {
+const reconcileTree = (nextVNode, prevVNode = {}) => {
   // break if no children to compare
   if (!prevVNode.children && !nextVNode.children) {
     return;
@@ -29,13 +33,20 @@ const diffTree = (nextVNode, prevVNode = {}) => {
 
     const wasRemoved = !nextVNodeMap[key];
 
-    if (child && child._root && wasRemoved) {
-      child._inst && child._inst.componentWillUnmount();
-      child._root.parentElement.removeChild(child._root);
+    if (wasRemoved) {
+      if (child && child._root) {
+        // child is a vnode
+        child._inst && child._inst.componentWillUnmount();
+        child._root.parentElement.removeChild(child._root);
+      } else {
+        // child is a comment | string | number | null
+        const parent = prevVNode._root;
+        parent.removeChild(parent.childNodes[i]);
+      }
     }
   }
 
-  let prevSibbling = prevVNode._root.firstChild;
+  let prevSibbling = nextVNode._root.firstChild;
 
   // handle new children
   for (let i = 0; i < nextVNode.children.length; i++) {
@@ -43,13 +54,16 @@ const diffTree = (nextVNode, prevVNode = {}) => {
     const key = computeKey(child, i);
 
     const wasAdded = nextVNodeMap[key] && !prevVNodeMap[key];
-    const wasChanged = nextVNodeMap[key] && prevVNodeMap[key];
+    const wasUnchanged = nextVNodeMap[key] && prevVNodeMap[key];
+
+    console.log('child', child, { wasAdded, wasUnchanged }, prevSibbling);
 
     if (wasAdded) {
       const nextSibbling = renderVNode(child, renderDOM);
-      prevSibbling.insertAdjacentElement('afterend', nextSibbling);
+      console.log('  adding...', prevSibbling, nextSibbling);
+      prevSibbling.after(nextSibbling);
       prevSibbling = nextSibbling;
-    } else if (wasChanged) {
+    } else if (wasUnchanged) {
       const shouldUpdate = child._inst
         ? child._inst.shouldComponentUpdate(child.props)
         : true;
@@ -62,11 +76,12 @@ const diffTree = (nextVNode, prevVNode = {}) => {
         );
         prevVNodeMap[key]._root.replaceWith(html);
         child._root = html;
+        prevSibbling = html;
       }
-
-      prevSibbling = child._root;
+    } else {
+      prevSibbling = prevSibbling.nextSibbling || prevSibbling;
     }
   }
 };
 
-export default diffTree;
+export default reconcileTree;
