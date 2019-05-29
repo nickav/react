@@ -11,6 +11,7 @@ export default class Component {
     this.state = state;
 
     if (this.shouldComponentUpdate(this.props, state)) {
+      this.componentWillReceiveProps(this.props, state);
       this.forceUpdate();
     }
 
@@ -32,6 +33,7 @@ export default class Component {
   shouldComponentUpdate(nextProps, nextState) {
     return true;
   }
+  componentDidUpdate(prevProps, prevState) {}
 
   render() {}
 }

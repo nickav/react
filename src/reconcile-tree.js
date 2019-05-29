@@ -27,59 +27,58 @@ const reconcileTree = (nextVNode, prevVNode = {}) => {
   const nextVNodeMap = computeChildKeyMap(nextVNode.children || []);
 
   // check removed children
-  for (let i = 0; i < prevVNode.children.length; i++) {
+  for (let i = prevVNode.children.length - 1; i >= 0; i--) {
     const child = prevVNode.children[i];
     const key = computeKey(child, i);
 
     const wasRemoved = !nextVNodeMap[key];
-
     if (wasRemoved) {
-      if (child && child._root) {
-        // child is a vnode
-        child._inst && child._inst.componentWillUnmount();
-        child._root.parentElement.removeChild(child._root);
-      } else {
-        // child is a comment | string | number | null
-        const parent = prevVNode._root;
-        parent.removeChild(parent.childNodes[i]);
-      }
+      child._inst && child._inst.componentWillUnmount();
+      const parent = prevVNode._root;
+      parent.removeChild(parent.childNodes[i]);
     }
   }
 
-  let prevSibbling = nextVNode._root.firstChild;
+  let prevSibling = nextVNode._root.firstChild;
 
   // handle new children
   for (let i = 0; i < nextVNode.children.length; i++) {
     const child = nextVNode.children[i];
     const key = computeKey(child, i);
 
-    const wasAdded = nextVNodeMap[key] && !prevVNodeMap[key];
-    const wasUnchanged = nextVNodeMap[key] && prevVNodeMap[key];
-
-    console.log('child', child, { wasAdded, wasUnchanged }, prevSibbling);
+    const wasAdded =
+      nextVNodeMap.hasOwnProperty(key) && !prevVNodeMap.hasOwnProperty(key);
+    const wasChanged =
+      nextVNodeMap.hasOwnProperty(key) && prevVNodeMap.hasOwnProperty(key);
 
     if (wasAdded) {
-      const nextSibbling = renderVNode(child, renderDOM);
-      console.log('  adding...', prevSibbling, nextSibbling);
-      prevSibbling.after(nextSibbling);
-      prevSibbling = nextSibbling;
-    } else if (wasUnchanged) {
+      const nextSibling = renderVNode(child, renderDOM);
+      if (i === 0) {
+        prevSibling.before(nextSibling);
+      } else {
+        prevSibling.after(nextSibling);
+      }
+      prevSibling = nextSibling;
+    } else if (wasChanged) {
       const shouldUpdate = child._inst
-        ? child._inst.shouldComponentUpdate(child.props)
+        ? child._inst.shouldComponentUpdate(child.props, child._inst.state)
         : true;
 
       if (shouldUpdate) {
-        console.log('changed', child);
+        //child._inst && child._inst.componentWillReceiveProps(child.props, child._inst.state);
+
         const html = renderVNode(
           child._inst ? child._inst.render() : child,
           renderDOM
         );
         prevVNodeMap[key]._root.replaceWith(html);
         child._root = html;
-        prevSibbling = html;
+        prevSibling = html;
+
+        //child._inst && child._inst.componentDidUpdate(child.props, child._inst.state);
       }
     } else {
-      prevSibbling = prevSibbling.nextSibbling || prevSibbling;
+      prevSibling = prevSibling.nextSibling || prevSibling;
     }
   }
 };

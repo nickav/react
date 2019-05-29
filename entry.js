@@ -64,18 +64,18 @@ class Header extends React.Component {
 }
 
 class App extends React.Component {
-  state = { hide: false };
+  state = { flag: false };
 
   componentDidMount() {
-    setTimeout(() => this.setState({ hide: true }), 200);
+    setTimeout(() => this.setState({ flag: true }), 200);
   }
 
-  render(_, { hide }) {
+  render(_, { flag }) {
     return (
       <div class="App" style="background: red;">
-        {hide && <div>Hello!</div>}
-        <Header title={hide ? 'hidden' : 'visible'} />
-        {!hide ? <div>Hi</div> : null}
+        {!flag ? <div>Hi</div> : null}
+        <Header title={flag ? 'hidden' : 'visible'} />
+        {flag && <div>Hello!</div>}
       </div>
     );
   }
