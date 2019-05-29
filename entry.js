@@ -17,7 +17,7 @@ class Ticker extends React.Component {
       props: this.props,
       state: this.state,
       nextProps,
-      nextState,
+      nextState
     });
   }
 
@@ -71,11 +71,25 @@ class App extends React.Component {
   }
 
   render(_, { flag }) {
-    return (
-      <div class="App" style="background: red;">
-        {!flag ? <div>Hi</div> : null}
+    /*
+ {!flag ? <div>Hi</div> : null}
         <Header title={flag ? 'hidden' : 'visible'} />
         {flag && <div>Hello!</div>}
+        */
+
+    if (flag) {
+      return (
+        <div class="App" style="background: red;">
+          hidden
+          <p>...</p>
+        </div>
+      );
+    }
+
+    return (
+      <div class="App" style="background: red;">
+        <p>...</p>
+        visible
       </div>
     );
   }
@@ -90,8 +104,7 @@ const tree = <App />;
 // const tree = createElement(Ticker, null, createElement(Ticker, null, createElement('div', null, "yo")));
 
 // bootstrap
-const root = document.getElementById('app');
-React.render(root, tree);
+React.render(tree, document.getElementById('app'));
 
 window.tree = tree;
 console.log(tree);

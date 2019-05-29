@@ -1,8 +1,8 @@
 import Component from './Component';
 
-export const getComponentProps = (vnode) => ({
+export const getComponentProps = vnode => ({
   ...vnode.props,
-  children: vnode.children || props.children,
+  children: vnode.children || props.children
 });
 
 // vnode -> renderNode
@@ -64,14 +64,14 @@ export const renderDOM = (vnode, render) => {
 
   // copy attributes onto the new node:
   const props = vnode.props || {};
-  Object.keys(props).forEach((k) => n.setAttribute(k, props[k]));
+  Object.keys(props).forEach(k => n.setAttribute(k, props[k]));
 
   // render children
-  vnode.children.forEach((child) => n.appendChild(render(child, renderDOM)));
+  vnode.children.forEach(child => n.appendChild(render(child, renderDOM)));
 
   return n;
 };
 
-export default (root, vnode) => {
+export default (vnode, root) => {
   root.appendChild(renderVNode(vnode, renderDOM));
 };
