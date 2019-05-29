@@ -8,7 +8,7 @@ export const getComponentProps = (vnode) => ({
 export const renderVNode = (vnode, renderNode) => {
   // empty node
   if (vnode === null || typeof vnode === 'boolean') {
-    return vnode;
+    return renderNode(vnode, renderVNode);
   }
 
   // text node
@@ -18,29 +18,22 @@ export const renderVNode = (vnode, renderNode) => {
 
   // html node
   if (typeof vnode.type === 'string') {
-    const html = renderNode(vnode, renderVNode);
-    vnode._root = html;
-    return html;
+    return renderNode(vnode, renderVNode);
   }
 
   // react element
   if (Component.isPrototypeOf(vnode.type)) {
     vnode._inst = new vnode.type(getComponentProps(vnode));
     vnode._inst._vnode = vnode;
-    vnode._render = (vnode) => renderVNode(vnode, renderNode);
 
-    //console.log('create new _inst', vnode.type);
     vnode._inst.componentWillMount();
     setTimeout(() => vnode._inst.componentDidMount(), 0);
 
-    // do the render
     const { _inst, props } = vnode;
-
     const nextVNode = _inst.render(props, _inst.state);
     const html = renderVNode(nextVNode, renderNode);
     vnode._prevVNode = nextVNode;
     vnode._root = html;
-
     return html;
   }
 
@@ -59,17 +52,21 @@ export const renderDOM = (vnode, render) => {
     return document.createTextNode(vnode);
   }
 
+  // Null and boolean are just comments (for debugging)
+  if (vnode === null || typeof vnode === 'boolean') {
+    return document.createComment(` ${vnode} `);
+  }
+
   // create a DOM element with the nodeName of our VDOM element:
   const n = document.createElement(vnode.type);
+  vnode._root = n;
 
   // copy attributes onto the new node:
   const props = vnode.props || {};
   Object.keys(props).forEach((k) => n.setAttribute(k, props[k]));
 
   // render children
-  vnode.children.forEach((child) =>
-    n.appendChild(render(child, renderDOM) || document.createComment(child))
-  );
+  vnode.children.forEach((child) => n.appendChild(render(child, renderDOM)));
 
   return n;
 };

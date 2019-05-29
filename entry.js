@@ -51,6 +51,10 @@ class Header extends React.Component {
     console.log('MOUNTING Header');
   }
 
+  componentDidMount() {
+    console.log('header mounted');
+  }
+
   render() {
     return (
       <div class="Header">
@@ -73,7 +77,10 @@ class App extends React.Component {
     console.log('App render!', this.state);
     return (
       <div style="background: red;">
+        {!hide && <div>Hi</div>}
         <Header title={hide ? 'hidden' : 'visible'} />
+        {null}
+        {hide && <div>Hello!</div>}
       </div>
     );
   }

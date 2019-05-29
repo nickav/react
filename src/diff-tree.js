@@ -1,34 +1,16 @@
 import { renderVNode, renderDOM } from './render';
 
 const computeKey = (vnode, i) =>
-  (vnode.props && vnode.props.key) ||
-  `${(vnode.type || {}).name || vnode.type || typeof vnode}.${i}`;
+  (vnode && vnode.props && vnode.props.key) ||
+  `${((vnode || {}).type || {}).name ||
+    (vnode || {}).type ||
+    typeof vnode}.${i}`;
 
 const computeChildKeyMap = (arr) =>
   arr.reduce(
     (memo, child, i) => ((memo[child && computeKey(child, i)] = child), memo),
     {}
   );
-
-// a - b
-const diffChildrenMaps = (a, b) =>
-  Object.entries(b)
-    .filter(([key]) => !a[key])
-    .map((e) => e[1])
-    .filter((e) => e);
-
-const findChangedChildren = (nextMap, prevMap) =>
-  Object.keys(nextMap)
-    .filter((key) => prevMap[key])
-    .map((key) => [prevMap[key], nextMap[key]])
-    .filter(([prev, next]) => {
-      if (next._inst) {
-        return next._inst.shouldComponentUpdate(next.props, {});
-      }
-
-      // TODO: maybe diff on props or something?
-      return true;
-    });
 
 const diffTree = (nextVNode, prevVNode = {}) => {
   // break if no children to compare
@@ -40,36 +22,51 @@ const diffTree = (nextVNode, prevVNode = {}) => {
   const prevVNodeMap = computeChildKeyMap(prevVNode.children || []);
   const nextVNodeMap = computeChildKeyMap(nextVNode.children || []);
 
-  // compare vnodes
-  const removed = diffChildrenMaps(nextVNodeMap, prevVNodeMap);
-  const added = diffChildrenMaps(prevVNodeMap, nextVNodeMap);
-  const changed = findChangedChildren(nextVNodeMap, prevVNodeMap);
+  // check removed children
+  for (let i = 0; i < prevVNode.children.length; i++) {
+    const child = prevVNode.children[i];
+    const key = computeKey(child, i);
 
-  // call lifecycle methods
-  removed.forEach((vnode) => vnode._inst && vnode._inst.componentWillUnmount());
-  changed.forEach(
-    (vnode) => vnode._inst && vnode._inst.componentWillReceiveProps(vnode.props)
-  );
+    const wasRemoved = !nextVNodeMap[key];
 
-  // update dom
-  removed.forEach((vnode) => {
-    vnode._root.parentElement.removeChild(vnode._root);
-  });
+    if (child && child._root && wasRemoved) {
+      child._inst && child._inst.componentWillUnmount();
+      child._root.parentElement.removeChild(child._root);
+    }
+  }
 
-  // TODO: fix ordering of added elements!
-  added.forEach((vnode) => {
-    prevVNode._root.appendChild(renderVNode(vnode, renderDOM));
-  });
+  let prevSibbling = prevVNode._root.firstChild;
 
-  changed.forEach((changes) => {
-    const vnode = changes[1];
-    const html = renderVNode(
-      vnode._inst ? vnode._inst.render() : vnode,
-      renderDOM
-    );
-    changes[0]._root.replaceWith(html);
-    vnode._root = html;
-  });
+  // handle new children
+  for (let i = 0; i < nextVNode.children.length; i++) {
+    const child = nextVNode.children[i];
+    const key = computeKey(child, i);
+
+    const wasAdded = nextVNodeMap[key] && !prevVNodeMap[key];
+    const wasChanged = nextVNodeMap[key] && prevVNodeMap[key];
+
+    if (wasAdded) {
+      const nextSibbling = renderVNode(child, renderDOM);
+      prevSibbling.insertAdjacentElement('afterend', nextSibbling);
+      prevSibbling = nextSibbling;
+    } else if (wasChanged) {
+      const shouldUpdate = child._inst
+        ? child._inst.shouldComponentUpdate(child.props)
+        : true;
+
+      if (shouldUpdate) {
+        console.log('changed', child);
+        const html = renderVNode(
+          child._inst ? child._inst.render() : child,
+          renderDOM
+        );
+        prevVNodeMap[key]._root.replaceWith(html);
+        child._root = html;
+      }
+
+      prevSibbling = child._root;
+    }
+  }
 };
 
 export default diffTree;
