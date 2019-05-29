@@ -1,4 +1,4 @@
-import { render, renderDOM } from './render';
+import { renderVNode, renderDOM } from './render';
 
 const computeKey = (vnode, i) =>
   (vnode.props && vnode.props.key) ||
@@ -58,12 +58,15 @@ const diffTree = (nextVNode, prevVNode = {}) => {
 
   // TODO: fix ordering of added elements!
   added.forEach((vnode) => {
-    prevVNode._root.appendChild(render(vnode, renderDOM));
+    prevVNode._root.appendChild(renderVNode(vnode, renderDOM));
   });
 
   changed.forEach((changes) => {
     const vnode = changes[1];
-    const html = render(vnode._inst ? vnode._inst.render() : vnode, renderDOM);
+    const html = renderVNode(
+      vnode._inst ? vnode._inst.render() : vnode,
+      renderDOM
+    );
     changes[0]._root.replaceWith(html);
     vnode._root = html;
   });

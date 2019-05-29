@@ -1,16 +1,10 @@
-import diffTree from './diff-tree';
-import { render, renderDOM } from './render';
-
 export { default as Component } from './Component';
-export { render } from './render';
+export { default as render } from './render';
 
-// returns a vnode
 export const createElement = (type, props = null, ...children) => ({
   type,
   props,
   children: [].concat(...children) || null,
 });
 
-export const mount = (root, vnode) => {
-  root.appendChild(render(vnode, renderDOM));
-};
+export const h = createElement;

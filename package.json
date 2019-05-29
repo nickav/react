@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack.config.js --mode development"
+    "start": "webpack-dev-server --config ./webpack.config.js --port 3000 --mode development"
   },
   "dependencies": {
     "@babel/core": "^7.4.5",
@@ -9,7 +9,9 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
     "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2",
+    "webpack-cli": "^3.3.2"
+  },
+  "devDependencies": {
     "webpack-dev-server": "^3.4.1"
   }
 }

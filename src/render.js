@@ -5,7 +5,7 @@ export const getComponentProps = (vnode) => ({
   children: vnode.children || props.children,
 });
 
-export const render = (vnode, renderNode) => {
+export const renderVNode = (vnode, renderNode) => {
   // empty node
   if (vnode === null || typeof vnode === 'boolean') {
     return vnode;
@@ -13,12 +13,12 @@ export const render = (vnode, renderNode) => {
 
   // text node
   if (typeof vnode === 'string' || typeof vnode === 'number') {
-    return renderNode(vnode.toString(), render);
+    return renderNode(vnode.toString(), renderVNode);
   }
 
   // html node
   if (typeof vnode.type === 'string') {
-    const html = renderNode(vnode, render);
+    const html = renderNode(vnode, renderVNode);
     vnode._root = html;
     return html;
   }
@@ -27,7 +27,7 @@ export const render = (vnode, renderNode) => {
   if (Component.isPrototypeOf(vnode.type)) {
     vnode._inst = new vnode.type(getComponentProps(vnode));
     vnode._inst._vnode = vnode;
-    vnode._render = (vnode) => render(vnode, renderNode);
+    vnode._render = (vnode) => renderVNode(vnode, renderNode);
 
     //console.log('create new _inst', vnode.type);
     vnode._inst.componentWillMount();
@@ -37,7 +37,7 @@ export const render = (vnode, renderNode) => {
     const { _inst, props } = vnode;
 
     const nextVNode = _inst.render(props, _inst.state);
-    const html = render(nextVNode, renderNode);
+    const html = renderVNode(nextVNode, renderNode);
     vnode._prevVNode = nextVNode;
     vnode._root = html;
 
@@ -46,7 +46,7 @@ export const render = (vnode, renderNode) => {
 
   // functional component
   if (typeof vnode.type === 'function') {
-    return render(vnode.type(getComponentProps(vnode)), renderNode);
+    return renderVNode(vnode.type(getComponentProps(vnode)), renderNode);
   }
 
   throw `Unknown component: ${vnode}`;
@@ -72,4 +72,8 @@ export const renderDOM = (vnode, render) => {
   );
 
   return n;
+};
+
+export default (root, vnode) => {
+  root.appendChild(renderVNode(vnode, renderDOM));
 };

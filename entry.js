@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { createElement, mount } from 'react';
 
 class Ticker extends React.Component {
   state = { counter: 0 };
@@ -88,10 +87,9 @@ const tree = <App />;
 
 // const tree = createElement(Ticker, null, createElement(Ticker, null, createElement('div', null, "yo")));
 
-console.log(tree);
-
 // bootstrap
 const root = document.getElementById('app');
-mount(root, tree);
+React.render(root, tree);
 
 window.tree = tree;
+console.log(tree);
