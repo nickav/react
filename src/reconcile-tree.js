@@ -16,54 +16,63 @@ const computeChildKeyMap = arr =>
     {}
   );
 
-const reconcileTree = (nextVNode, prevVNode = {}) => {
+// where each tree is a vnode
+const reconcileTree = (nextTree, prevTree = {}) => {
   // break if no children to compare
-  if (!prevVNode.children && !nextVNode.children) {
+  if (!prevTree.children && !nextTree.children) {
     return;
   }
 
   // create lookup object of key -> child
-  const prevVNodeMap = computeChildKeyMap(prevVNode.children || []);
-  const nextVNodeMap = computeChildKeyMap(nextVNode.children || []);
+  const prevVNodeMap = computeChildKeyMap(prevTree.children || []);
+  const nextVNodeMap = computeChildKeyMap(nextTree.children || []);
 
   // check removed children
-  for (let i = prevVNode.children.length - 1; i >= 0; i--) {
-    const child = prevVNode.children[i];
+  for (let i = prevTree.children.length - 1; i >= 0; i--) {
+    const child = prevTree.children[i];
     const key = computeKey(child, i);
 
     const wasRemoved = !nextVNodeMap[key];
     if (wasRemoved) {
       child && child._inst && child._inst.componentWillUnmount();
-      const parent = prevVNode._root;
+      const parent = prevTree._root;
       parent.removeChild(parent.childNodes[i]);
     }
   }
 
-  let prevSibling = nextVNode._root.firstChild;
-  console.log({ prevSibling });
-  // debugger;
+  //console.log({ nextVNodeMap, prevVNodeMap, nextTree });
+
+  /*
+  if (nextTree.children.length === 3) {
+    debugger;
+  }
+  */
 
   // handle new children
-  for (let i = 0; i < nextVNode.children.length; i++) {
-    const child = nextVNode.children[i];
+  for (let i = 0; i < nextTree.children.length; i++) {
+    const child = nextTree.children[i];
     const key = computeKey(child, i);
 
     const wasAdded =
       nextVNodeMap.hasOwnProperty(key) && !prevVNodeMap.hasOwnProperty(key);
+
+    if (wasAdded) {
+      const html = renderVNode(child, renderDOM);
+
+      const parent = nextTree._root;
+      if (parent.childNodes[i]) {
+        parent.childNodes[i].before(html);
+      } else {
+        parent.appendChild(html);
+      }
+
+      continue;
+    }
+
     const wasChanged =
       nextVNodeMap.hasOwnProperty(key) && prevVNodeMap.hasOwnProperty(key);
 
-    if (wasAdded) {
-      const nextSibling = renderVNode(child, renderDOM);
-      if (!prevSibling) {
-        nextVNode._root.appendChild(nextSibling);
-      } else if (i === 0) {
-        prevSibling.before(nextSibling);
-      } else {
-        prevSibling.after(nextSibling);
-      }
-      prevSibling = nextSibling;
-    } else if (wasChanged) {
+    if (wasChanged) {
       // prevChild has the previous vnode _inst
       const prevChild = prevVNodeMap[key];
 
@@ -75,35 +84,36 @@ const reconcileTree = (nextVNode, prevVNode = {}) => {
             )
           : true;
 
-      if (shouldUpdate) {
-        console.log('shouldUpdate', prevChild);
-
-        if (prevChild && prevChild._inst) {
-          const nextProps = child.props;
-          const nextState = prevChild._inst.state;
-          // call lifecycle method
-          prevChild._inst.componentWillReceiveProps(nextProps, nextState);
-          // update the props
-          prevChild._inst.props = nextProps;
-          // render
-          const nextVNode = prevChild._inst.render(nextProps, nextState);
-          nextVNode._root = prevChild._root;
-          reconcileTree(nextVNode, prevChild._prevVNode);
-        } else {
-          const html = renderVNode(child, renderDOM);
-
-          console.log({ prevChild, key, prevVNode });
-          const domNode = prevVNode._root.childNodes[i];
-          domNode.replaceWith(html);
-
-          //child._root = html;
-          prevSibling = html;
-        }
-
-        //child._inst && child._inst.componentDidUpdate(child.props, child._inst.state);
+      if (!shouldUpdate) {
+        continue;
       }
-    } else {
-      prevSibling = prevSibling.nextSibling || prevSibling;
+
+      if (prevChild && prevChild._inst) {
+        const prevProps = prevChild._inst.props;
+        const prevState = prevChild._inst.state;
+        const nextProps = child.props;
+        const nextState = prevState;
+
+        // call lifecycle method
+        prevChild._inst.componentWillReceiveProps(nextProps, nextState);
+        // update the props
+        prevChild._inst.props = nextProps;
+        // render
+        const nextVNode = prevChild._inst.render(nextProps, nextState);
+        nextVNode._root = prevChild._root;
+        reconcileTree(nextVNode, prevChild._prevVNode);
+
+        prevChild._inst.componentDidUpdate(prevProps, prevState);
+      } else {
+        // TODO: maybe reconcile things here too?
+        const html = renderVNode(child, renderDOM);
+
+        console.log({ prevChild, key, prevTree });
+        const domNode = prevTree._root.childNodes[i];
+        domNode.replaceWith(html);
+
+        //child._root = html;
+      }
     }
   }
 };

@@ -67,29 +67,15 @@ class App extends React.Component {
   state = { flag: false };
 
   componentDidMount() {
-    setTimeout(() => this.setState({ flag: true }), 200);
+    setTimeout(() => this.setState({ flag: true }), 4000);
   }
 
   render(_, { flag }) {
-    /*
- {!flag ? <div>Hi</div> : null}
-        <Header title={flag ? 'hidden' : 'visible'} />
-        {flag && <div>Hello!</div>}
-        */
-
-    if (flag) {
-      return (
-        <div class="App" style="background: red;">
-          hidden
-          <p>...</p>
-        </div>
-      );
-    }
-
     return (
       <div class="App" style="background: red;">
-        <p>...</p>
-        visible
+        {!flag ? <div>Hi</div> : null}
+        <Header title={flag ? 'hidden' : 'visible'} />
+        {flag && <div>Hello!</div>}
       </div>
     );
   }
