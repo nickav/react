@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: './entry.js',
+  devtool: 'eval-source-map',
   output: {
     path: __dirname + '/dist',
     publicPath: '/',
@@ -15,7 +16,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader'],
+        use: ['babel-loader']
       }
     ]
   },
@@ -24,5 +25,5 @@ module.exports = {
     alias: {
       react: path.resolve(__dirname, './src/index.js')
     }
-  },
+  }
 };

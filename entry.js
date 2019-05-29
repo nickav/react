@@ -67,15 +67,24 @@ class App extends React.Component {
   state = { flag: false };
 
   componentDidMount() {
-    setTimeout(() => this.setState({ flag: true }), 4000);
+    setTimeout(() => this.setState({ flag: true }), 2000);
   }
-
-  render(_, { flag }) {
-    return (
+  /**
+ * 
       <div class="App" style="background: red;">
-        {!flag ? <div>Hi</div> : null}
+        {Math.random()}
+        <input />
         <Header title={flag ? 'hidden' : 'visible'} />
-        {flag && <div>Hello!</div>}
+      </div>
+ */
+  render(_, { flag }) {
+    console.log('App render!', flag);
+    return (
+      <div>
+        {null}
+        {123}
+        {Math.random()}
+        {'string'}
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { renderVNode, renderDOM } from './render';
+import { renderVNode, renderDOM, isLiteralNode } from './render';
 
 const computeKey = (vnode, i) => {
   if (vnode && vnode.props && vnode.props.key) {
@@ -16,6 +16,15 @@ const computeChildKeyMap = arr =>
     {}
   );
 
+const shouldVNodeUpdate = (nextVNode, prevVNode) => {
+  if (isLiteralNode(prevVNode)) {
+    return prevVNode !== nextVNode;
+  }
+
+  // TODO:
+  return true;
+};
+
 // where each tree is a vnode
 const reconcileTree = (nextTree, prevTree = {}) => {
   // break if no children to compare
@@ -24,15 +33,17 @@ const reconcileTree = (nextTree, prevTree = {}) => {
   }
 
   // create lookup object of key -> child
-  const prevVNodeMap = computeChildKeyMap(prevTree.children || []);
-  const nextVNodeMap = computeChildKeyMap(nextTree.children || []);
+  const prevChildren = prevTree.children || [];
+  const nextChildren = nextTree.children || [];
+  const prevVNodeMap = computeChildKeyMap(prevChildren);
+  const nextVNodeMap = computeChildKeyMap(nextChildren);
 
   // check removed children
-  for (let i = prevTree.children.length - 1; i >= 0; i--) {
-    const child = prevTree.children[i];
+  for (let i = prevChildren.length - 1; i >= 0; i--) {
+    const child = prevChildren[i];
     const key = computeKey(child, i);
 
-    const wasRemoved = !nextVNodeMap[key];
+    const wasRemoved = !nextVNodeMap.hasOwnProperty(key);
     if (wasRemoved) {
       child && child._inst && child._inst.componentWillUnmount();
       const parent = prevTree._root;
@@ -40,17 +51,9 @@ const reconcileTree = (nextTree, prevTree = {}) => {
     }
   }
 
-  //console.log({ nextVNodeMap, prevVNodeMap, nextTree });
-
-  /*
-  if (nextTree.children.length === 3) {
-    debugger;
-  }
-  */
-
-  // handle new children
-  for (let i = 0; i < nextTree.children.length; i++) {
-    const child = nextTree.children[i];
+  // handle added children
+  for (let i = 0; i < nextChildren.length; i++) {
+    const child = nextChildren[i];
     const key = computeKey(child, i);
 
     const wasAdded =
@@ -65,9 +68,13 @@ const reconcileTree = (nextTree, prevTree = {}) => {
       } else {
         parent.appendChild(html);
       }
-
-      continue;
     }
+  }
+
+  // handle changed children
+  for (let i = 0; i < nextChildren.length; i++) {
+    const child = nextChildren[i];
+    const key = computeKey(child, i);
 
     const wasChanged =
       nextVNodeMap.hasOwnProperty(key) && prevVNodeMap.hasOwnProperty(key);
@@ -82,7 +89,7 @@ const reconcileTree = (nextTree, prevTree = {}) => {
               child.props,
               prevChild._inst.state
             )
-          : true;
+          : shouldVNodeUpdate(child, prevChild);
 
       if (!shouldUpdate) {
         continue;
@@ -105,14 +112,15 @@ const reconcileTree = (nextTree, prevTree = {}) => {
 
         prevChild._inst.componentDidUpdate(prevProps, prevState);
       } else {
-        // TODO: maybe reconcile things here too?
-        const html = renderVNode(child, renderDOM);
-
-        console.log({ prevChild, key, prevTree });
-        const domNode = prevTree._root.childNodes[i];
-        domNode.replaceWith(html);
-
-        //child._root = html;
+        // Literals
+        const nextVNode = child;
+        if (isLiteralNode(nextVNode)) {
+          const html = renderVNode(nextVNode, renderDOM);
+          const parent = nextTree._root;
+          parent.childNodes[i].replaceWith(html);
+        } else {
+          reconcileTree(nextVNode, prevChild._prevVNode);
+        }
       }
     }
   }
