@@ -37,9 +37,28 @@ class Ticker extends React.Component {
   }
 }
 
-class Text extends React.Component {
+class Title extends React.Component {
+  componentWillMount() {
+    console.log('MOUNTING Text');
+  }
+
   render() {
-    return <div>{this.props.title}</div>;
+    return <div class="Title">{this.props.title}</div>;
+  }
+}
+
+class Header extends React.Component {
+  componentWillMount() {
+    console.log('MOUNTING Header');
+  }
+
+  render() {
+    return (
+      <div class="Header">
+        <Title title={this.props.title} />
+        <Title title="TITLE" />
+      </div>
+    );
   }
 }
 
@@ -48,23 +67,21 @@ class App extends React.Component {
 
   componentDidMount() {
     setTimeout(() => this.setState({ hide: true }), 200);
-    setTimeout(() => this.setState({ hide: false }), 400);
+    //setTimeout(() => this.setState({ hide: false }), 400);
   }
 
   render(_, { hide }) {
     console.log('App render!', this.state);
     return (
       <div style="background: red;">
-        {hide && <div>hello world!</div>}
-        <Text title={hide ? 'hidden' : 'visible'} />
-        {null}
-        {!hide && <div>remove me</div>}
+        <Header title={hide ? 'hidden' : 'visible'} />
       </div>
     );
   }
 }
 
 const tree = <App />;
+
 //const tree = <div><div></div></div>
 
 //const Title = () => createElement('div', { class: 'title' }, 'title');

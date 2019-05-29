@@ -11,8 +11,6 @@ export const createElement = (type, props = null, ...children) => ({
   children: [].concat(...children) || null,
 });
 
-
 export const mount = (root, vnode) => {
   root.appendChild(render(vnode, renderDOM));
-  //root.appendChild(diffTree({ children: [vnode] }, {})[0]);
 };
