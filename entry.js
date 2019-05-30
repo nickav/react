@@ -63,17 +63,20 @@ class Header extends React.Component {
   }
 }
 
+const MyName = (props) => <h1>{props.name}</h1>;
+
 class App extends React.Component {
   state = { flag: false };
 
   componentDidMount() {
-    setTimeout(() => this.setState({ flag: true }), 8000);
+    setTimeout(() => this.setState({ flag: true }), 2000);
   }
 
   render(_, { flag }) {
     console.log('App render!', flag);
     return (
       <div class="App">
+        <MyName name={flag ? 'slim' : 'shady'} />
         <input
           {...(!flag ? { 'data-first': true } : { 'data-second': true })}
           onInput={flag ? console.log : undefined}

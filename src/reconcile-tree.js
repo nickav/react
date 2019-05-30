@@ -1,4 +1,4 @@
-import { renderVNode, renderDOM } from './render';
+import { renderVNode, renderDOM, getComponentProps } from './render';
 import { updateElementProps } from './dom';
 import * as t from './types';
 
@@ -66,7 +66,7 @@ const reconcileTree = (nextTree, prevTree) => {
     if (wasAdded) {
       const html = renderVNode(child, renderDOM);
 
-      const parent = prevTree._root;
+      const parent = nextTree._root;
       if (parent.childNodes[i]) {
         parent.childNodes[i].before(html);
       } else {
@@ -100,9 +100,9 @@ const reconcileTree = (nextTree, prevTree) => {
       }
 
       if (t.isComponentNode(prevChild)) {
-        const prevProps = prevChild._inst.props;
+        const prevProps = getComponentProps(prevChild);
         const prevState = prevChild._inst.state;
-        const nextProps = child.props;
+        const nextProps = getComponentProps(child);
         const nextState = prevState;
 
         // call lifecycle method
@@ -111,22 +111,33 @@ const reconcileTree = (nextTree, prevTree) => {
         prevChild._inst.props = nextProps;
         // render
         const nextVNode = prevChild._inst.render(nextProps, nextState);
-        nextVNode._root = prevChild._root;
         reconcileTree(nextVNode, prevChild._prevVNode);
 
         prevChild._inst.componentDidUpdate(prevProps, prevState);
-      } else {
-        // Literals
-        const nextVNode = child;
-        if (t.isLiteralNode(nextVNode)) {
-          const html = renderVNode(nextVNode, renderDOM);
-          const parent = prevTree._root;
-          parent.childNodes[i].replaceWith(html);
-        } else {
-          updateElementProps(prevChild._root, nextVNode.props, prevChild.props);
-          reconcileTree(nextVNode, prevChild);
-        }
+        continue;
       }
+
+      if (t.isLiteralNode(child)) {
+        const html = renderVNode(child, renderDOM);
+        const parent = nextTree._root;
+        parent.childNodes[i].replaceWith(html);
+        continue;
+      }
+
+      if (t.isHTMLNode(child)) {
+        const nextVNode = child;
+        updateElementProps(prevChild._root, nextVNode.props, prevChild.props);
+        reconcileTree(nextVNode, prevChild);
+        continue;
+      }
+
+      if (t.isFunctionalNode(child)) {
+        const nextVNode = child.type(getComponentProps(child));
+        reconcileTree(nextVNode, prevChild._prevVNode);
+        continue;
+      }
+
+      throw `Unknown component: ${vnode}`;
     }
   }
 };

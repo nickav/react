@@ -21,22 +21,21 @@ export const renderVNode = (vnode, renderNode) => {
   }
 
   if (t.isComponentNode(vnode)) {
-    vnode._inst = new vnode.type(getComponentProps(vnode));
-    vnode._inst._vnode = vnode;
+    const props = getComponentProps(vnode);
+    const _inst = new vnode.type(props);
+    _inst._vnode = vnode;
+    vnode._inst = _inst;
 
-    vnode._inst.componentWillMount();
-    setTimeout(() => vnode._inst.componentDidMount(), 0);
+    _inst.componentWillMount();
+    setTimeout(() => _inst.componentDidMount(), 0);
 
-    const { _inst, props } = vnode;
-    const nextVNode = _inst.render(props, _inst.state);
-    const html = renderVNode(nextVNode, renderNode);
-    vnode._prevVNode = nextVNode;
-    vnode._root = html;
-    return html;
+    const nextVNode = (vnode._prevVNode = _inst.render(props, _inst.state));
+    return (vnode._root = renderVNode(nextVNode, renderNode));
   }
 
   if (t.isFunctionalNode(vnode)) {
-    return renderVNode(vnode.type(getComponentProps(vnode)), renderNode);
+    const nextVNode = (vnode._prevVNode = vnode.type(getComponentProps(vnode)));
+    return (vnode._root = renderVNode(nextVNode, renderNode));
   }
 
   throw `Unknown component: ${vnode}`;

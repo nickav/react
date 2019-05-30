@@ -49,7 +49,7 @@ export const updateElementProps = (el, nextProps, prevProps) => {
       key !== 'key'
     ) {
       if (isEventListener(key) && prevProps.hasOwnProperty(key)) {
-        removeElementProp(el, key, prevProps[key]);
+        //removeElementProp(el, key, prevProps[key]);
       }
       setElementProp(el, key, nextProps[key]);
     }
