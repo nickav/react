@@ -81,10 +81,7 @@ class App extends React.Component {
     console.log('App render!', flag);
     return (
       <div>
-        {null}
-        {123}
-        {Math.random()}
-        {'string'}
+        <input {...(flag ? { 'data-first': true } : { 'data-second': true })} />
       </div>
     );
   }

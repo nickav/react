@@ -1,5 +1,12 @@
 import { renderVNode, renderDOM, isLiteralNode } from './render';
 
+const objDiff = (o1, o2) =>
+  Object.keys(o2).reduce((diff, key) => {
+    if (!key in o2) diff[key] = o2[key];
+    if (o1[key] !== o2[key]) diff[key] = o2[key];
+    return diff;
+  }, {});
+
 const computeKey = (vnode, i) => {
   if (vnode && vnode.props && vnode.props.key) {
     return vnode.props.key;
@@ -22,11 +29,14 @@ const shouldVNodeUpdate = (nextVNode, prevVNode) => {
   }
 
   // TODO:
+  console.log({ nextVNode, prevVNode });
   return true;
 };
 
 // where each tree is a vnode
-const reconcileTree = (nextTree, prevTree = {}) => {
+const reconcileTree = (nextTree, prevTree) => {
+  nextTree._root = prevTree._root;
+
   // break if no children to compare
   if (!prevTree.children && !nextTree.children) {
     return;
@@ -62,7 +72,7 @@ const reconcileTree = (nextTree, prevTree = {}) => {
     if (wasAdded) {
       const html = renderVNode(child, renderDOM);
 
-      const parent = nextTree._root;
+      const parent = prevTree._root;
       if (parent.childNodes[i]) {
         parent.childNodes[i].before(html);
       } else {
@@ -116,10 +126,27 @@ const reconcileTree = (nextTree, prevTree = {}) => {
         const nextVNode = child;
         if (isLiteralNode(nextVNode)) {
           const html = renderVNode(nextVNode, renderDOM);
-          const parent = nextTree._root;
+          const parent = prevTree._root;
           parent.childNodes[i].replaceWith(html);
         } else {
-          reconcileTree(nextVNode, prevChild._prevVNode);
+          // update html attributes
+          const nextProps = nextVNode.props || {};
+          const prevProps = prevChild.props || {};
+
+          Object.keys(prevProps).forEach(oldProp => {
+            prevChild._root.removeAttribute(oldProp);
+          });
+
+          Object.keys(nextProps).forEach(prop => {
+            prevChild._root.setAttribute(prop, nextProps[prop]);
+          });
+
+          // Object.keys(props).forEach(k => {
+          //   if (nextProps.entries.map)
+          //     prevChild._root.setAttribute(k, props[k]);
+          // });
+
+          reconcileTree(nextVNode, prevChild);
         }
       }
     }
