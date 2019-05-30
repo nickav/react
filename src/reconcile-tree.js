@@ -8,12 +8,12 @@ import {
 
 const computeKey = (vnode, i) => {
   if (vnode && vnode.props && vnode.props.key) {
-    return vnode.props.key;
+    return `__user__.${vnode.props.key}-${i}`;
   }
 
-  return `${
+  return `__react__.${
     vnode && vnode.type ? vnode.type.name || vnode.type : typeof vnode
-  }.${i}`;
+  }-${i}`;
 };
 
 const computeChildKeyMap = (arr) =>
@@ -27,8 +27,6 @@ const shouldVNodeUpdate = (nextVNode, prevVNode) => {
     return prevVNode !== nextVNode;
   }
 
-  // TODO:
-  console.log({ nextVNode, prevVNode });
   return true;
 };
 

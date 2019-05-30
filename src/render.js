@@ -56,11 +56,19 @@ export const renderVNode = (vnode, renderNode) => {
 };
 
 export const updateElementProps = (el, nextProps, prevProps) => {
+  // remove old props
   prevProps = prevProps || {};
-  Object.keys(prevProps).forEach((key) => el.removeAttribute(key));
+  Object.keys(prevProps).forEach(
+    (key) => !nextProps.hasOwnProperty(key) && el.removeAttribute(key)
+  );
 
+  // update new props
   nextProps = nextProps || {};
-  Object.keys(nextProps).forEach((key) => el.setAttribute(key, nextProps[key]));
+  Object.keys(nextProps).forEach(
+    (key) =>
+      (!prevProps.hasOwnProperty(key) || prevProps[key] !== nextProps[key]) &&
+      el.setAttribute(key, nextProps[key])
+  );
 };
 
 // vnode -> DOM Element
