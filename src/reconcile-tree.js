@@ -1,19 +1,16 @@
-import {
-  renderVNode,
-  renderDOM,
-  isLiteralNode,
-  isComponentNode,
-  updateElementProps,
-} from './render';
+import { renderVNode, renderDOM } from './render';
+import { updateElementProps } from './dom';
+import * as t from './types';
 
 const computeKey = (vnode, i) => {
   if (vnode && vnode.props && vnode.props.key) {
     return vnode.props.key;
   }
 
-  return `__react__.${
-    vnode && vnode.type ? vnode.type.name || vnode.type : typeof vnode
-  }-${i}`;
+  const key =
+    vnode && vnode.type ? vnode.type.name || vnode.type : typeof vnode;
+
+  return `__react__.${key}-${i}`;
 };
 
 const computeChildKeyMap = (arr) =>
@@ -23,7 +20,7 @@ const computeChildKeyMap = (arr) =>
   );
 
 const shouldVNodeUpdate = (nextVNode, prevVNode) => {
-  if (isLiteralNode(prevVNode)) {
+  if (t.isLiteralNode(prevVNode)) {
     return prevVNode !== nextVNode;
   }
 
@@ -102,7 +99,7 @@ const reconcileTree = (nextTree, prevTree) => {
         continue;
       }
 
-      if (isComponentNode(prevChild)) {
+      if (t.isComponentNode(prevChild)) {
         const prevProps = prevChild._inst.props;
         const prevState = prevChild._inst.state;
         const nextProps = child.props;
@@ -121,7 +118,7 @@ const reconcileTree = (nextTree, prevTree) => {
       } else {
         // Literals
         const nextVNode = child;
-        if (isLiteralNode(nextVNode)) {
+        if (t.isLiteralNode(nextVNode)) {
           const html = renderVNode(nextVNode, renderDOM);
           const parent = prevTree._root;
           parent.childNodes[i].replaceWith(html);

@@ -73,7 +73,7 @@ class App extends React.Component {
   render(_, { flag }) {
     console.log('App render!', flag);
     return (
-      <div>
+      <div class="App">
         <input
           {...(!flag ? { 'data-first': true } : { 'data-second': true })}
           onInput={console.log}

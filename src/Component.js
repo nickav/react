@@ -11,7 +11,8 @@ export default class Component {
     this.state = state;
 
     if (this.shouldComponentUpdate(this.props, state)) {
-      this.componentWillReceiveProps(this.props, state);
+      // TODO: do we need this?
+      //this.componentWillReceiveProps(this.props, state);
       this.forceUpdate();
     }
 

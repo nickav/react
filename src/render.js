@@ -1,39 +1,26 @@
-import Component from './Component';
+import * as t from './types';
+import { updateElementProps } from './dom';
 
 export const getComponentProps = (vnode) => ({
   ...vnode.props,
   children: vnode.children || props.children,
 });
 
-export const isEmptyNode = (vnode) =>
-  vnode === null || typeof vnode === 'boolean';
-
-export const isTextNode = (vnode) =>
-  typeof vnode === 'string' || typeof vnode === 'number';
-
-export const isLiteralNode = (vnode) => isTextNode(vnode) || isEmptyNode(vnode);
-
-export const isHTMLNode = (vnode) => typeof vnode.type === 'string';
-
-export const isComponentNode = (vnode) => Component.isPrototypeOf(vnode.type);
-
-export const isFunctionalNode = (vnode) => typeof vnode.type === 'function';
-
 // vnode -> renderNode
 export const renderVNode = (vnode, renderNode) => {
-  if (isEmptyNode(vnode)) {
+  if (t.isEmptyNode(vnode)) {
     return renderNode(vnode, renderVNode);
   }
 
-  if (isTextNode(vnode)) {
+  if (t.isTextNode(vnode)) {
     return renderNode(vnode.toString(), renderVNode);
   }
 
-  if (isHTMLNode(vnode)) {
+  if (t.isHTMLNode(vnode)) {
     return renderNode(vnode, renderVNode);
   }
 
-  if (isComponentNode(vnode)) {
+  if (t.isComponentNode(vnode)) {
     vnode._inst = new vnode.type(getComponentProps(vnode));
     vnode._inst._vnode = vnode;
 
@@ -48,54 +35,17 @@ export const renderVNode = (vnode, renderNode) => {
     return html;
   }
 
-  if (isFunctionalNode(vnode)) {
+  if (t.isFunctionalNode(vnode)) {
     return renderVNode(vnode.type(getComponentProps(vnode)), renderNode);
   }
 
   throw `Unknown component: ${vnode}`;
 };
 
-const setElementProp = (el, key, value) => {
-  if (key.startsWith('on')) {
-    el.addEventListener(key.slice(2).toLowerCase(), value);
-  } else {
-    el.setAttribute(key, value);
-  }
-};
-
-const removeElementProp = (el, key, value) => {
-  if (key.startsWith('on')) {
-    el.removeEventListener(key.slice(2).toLowerCase(), value);
-  } else {
-    el.removeAttribute(key);
-  }
-};
-
-export const updateElementProps = (el, nextProps, prevProps) => {
-  // remove old props
-  prevProps = prevProps || {};
-  Object.keys(prevProps).forEach((key) => {
-    if (!nextProps.hasOwnProperty(key)) {
-      removeElementProp(el, key, prevProps[key]);
-    }
-  });
-
-  // update new props
-  nextProps = nextProps || {};
-  Object.keys(nextProps).forEach((key) => {
-    if (
-      (!prevProps.hasOwnProperty(key) || prevProps[key] !== nextProps[key]) &&
-      key !== 'key'
-    ) {
-      setElementProp(el, key, nextProps[key]);
-    }
-  });
-};
-
 // vnode -> DOM Element
 export const renderDOM = (vnode, render) => {
   // null and boolean are just comments (for debugging)
-  if (vnode === null || typeof vnode === 'boolean') {
+  if (t.isEmptyNode(vnode)) {
     return document.createComment(`(${vnode})`);
   }
 
