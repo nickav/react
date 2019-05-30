@@ -8,8 +8,10 @@ export const isTextNode = (vnode) =>
 
 export const isLiteralNode = (vnode) => isTextNode(vnode) || isEmptyNode(vnode);
 
-export const isHTMLNode = (vnode) => typeof vnode.type === 'string';
+export const isHTMLNode = (vnode) => vnode && typeof vnode.type === 'string';
 
-export const isComponentNode = (vnode) => Component.isPrototypeOf(vnode.type);
+export const isComponentNode = (vnode) =>
+  vnode && Component.isPrototypeOf(vnode.type);
 
-export const isFunctionalNode = (vnode) => typeof vnode.type === 'function';
+export const isFunctionalNode = (vnode) =>
+  vnode && typeof vnode.type === 'function';

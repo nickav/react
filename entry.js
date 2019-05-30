@@ -40,11 +40,16 @@ class Ticker extends React.Component {
 
 class Title extends React.Component {
   componentWillMount() {
-    console.log('MOUNTING Text');
+    //console.log('MOUNTING Text');
   }
 
   render() {
-    return <div class="Title">{this.props.title}</div>;
+    const { title, innerRef } = this.props;
+    return (
+      <div class="Title" ref={innerRef}>
+        {title}
+      </div>
+    );
   }
 }
 
@@ -69,14 +74,20 @@ class App extends React.Component {
   state = { flag: false };
 
   componentDidMount() {
+    console.log(this);
     setTimeout(() => this.setState({ flag: true }), 2000);
   }
 
   render(_, { flag }) {
     console.log('App render!', flag);
     return (
-      <div class="App">
-        <MyName name={flag ? 'slim' : 'shady'} />
+      <div class="App" ref={(root) => (this.div = root)}>
+        <MyName ref={(el) => (this.fn = el)} name={flag ? 'slim' : 'shady'} />
+        <Title
+          title="HELLO"
+          ref={(el) => (this.component = el)}
+          innerRef={(el) => (this.innerRef = el)}
+        />
         <input
           {...(!flag ? { 'data-first': true } : { 'data-second': true })}
           onInput={flag ? console.log : undefined}
@@ -86,16 +97,6 @@ class App extends React.Component {
             <li key={i}>{i}</li>
           ))}
         </ul>
-        <div>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i}>{i}</div>
-          ))}
-        </div>
-        <div>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i}>{i * i}</div>
-          ))}
-        </div>
       </div>
     );
   }

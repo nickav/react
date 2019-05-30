@@ -1,6 +1,19 @@
 import * as t from './types';
 import { updateElementProps } from './dom';
 
+export const setRef = (vnode) => {
+  if (vnode.props && vnode.props.ref) {
+    vnode.props.ref(vnode._inst || vnode._root);
+  }
+};
+
+const dirtyRenderVNode = (vnode, nextVNode, renderNode) => {
+  vnode._prevVNode = nextVNode;
+  vnode._root = renderVNode(vnode._prevVNode, renderNode);
+  setRef(vnode);
+  return vnode._root;
+};
+
 export const getComponentProps = (vnode) => ({
   ...vnode.props,
   children: vnode.children || props.children,
@@ -29,13 +42,19 @@ export const renderVNode = (vnode, renderNode) => {
     _inst.componentWillMount();
     setTimeout(() => _inst.componentDidMount(), 0);
 
-    const nextVNode = (vnode._prevVNode = _inst.render(props, _inst.state));
-    return (vnode._root = renderVNode(nextVNode, renderNode));
+    return dirtyRenderVNode(
+      vnode,
+      _inst.render(props, _inst.state),
+      renderNode
+    );
   }
 
   if (t.isFunctionalNode(vnode)) {
-    const nextVNode = (vnode._prevVNode = vnode.type(getComponentProps(vnode)));
-    return (vnode._root = renderVNode(nextVNode, renderNode));
+    return dirtyRenderVNode(
+      vnode,
+      vnode.type(getComponentProps(vnode)),
+      renderNode
+    );
   }
 
   throw `Unknown component: ${vnode}`;
@@ -49,13 +68,14 @@ export const renderDOM = (vnode, render) => {
   }
 
   // strings just convert to #text nodes
-  if (typeof vnode === 'string') {
+  if (t.isTextNode(vnode)) {
     return document.createTextNode(vnode);
   }
 
   // create a DOM element with the nodeName of our VDOM element:
   const n = document.createElement(vnode.type);
   vnode._root = n;
+  setRef(vnode);
 
   // copy attributes onto the new node:
   updateElementProps(n, vnode.props);

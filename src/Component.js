@@ -36,5 +36,9 @@ export default class Component {
   }
   componentDidUpdate(prevProps, prevState) {}
 
+  getRoot() {
+    return this._vnode._root;
+  }
+
   render() {}
 }

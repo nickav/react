@@ -1,4 +1,4 @@
-import { renderVNode, renderDOM, getComponentProps } from './render';
+import { renderVNode, renderDOM, getComponentProps, setRef } from './render';
 import { updateElementProps } from './dom';
 import * as t from './types';
 
@@ -112,6 +112,7 @@ const reconcileTree = (nextTree, prevTree) => {
         // render
         const nextVNode = prevChild._inst.render(nextProps, nextState);
         reconcileTree(nextVNode, prevChild._prevVNode);
+        setRef(nextVNode);
 
         prevChild._inst.componentDidUpdate(prevProps, prevState);
         continue;
@@ -128,12 +129,14 @@ const reconcileTree = (nextTree, prevTree) => {
         const nextVNode = child;
         updateElementProps(prevChild._root, nextVNode.props, prevChild.props);
         reconcileTree(nextVNode, prevChild);
+        setRef(nextVNode);
         continue;
       }
 
       if (t.isFunctionalNode(child)) {
         const nextVNode = child.type(getComponentProps(child));
         reconcileTree(nextVNode, prevChild._prevVNode);
+        setRef(nextVNode);
         continue;
       }
 
