@@ -67,7 +67,7 @@ class App extends React.Component {
   state = { flag: false };
 
   componentDidMount() {
-    setTimeout(() => this.setState({ flag: true }), 2000);
+    setTimeout(() => this.setState({ flag: true }), 8000);
   }
 
   render(_, { flag }) {
@@ -76,7 +76,7 @@ class App extends React.Component {
       <div class="App">
         <input
           {...(!flag ? { 'data-first': true } : { 'data-second': true })}
-          onInput={console.log}
+          onInput={flag ? console.log : undefined}
         />
         <ul>
           {Array.from({ length: 10 }).map((_, i) => (
