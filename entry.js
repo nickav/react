@@ -21,6 +21,20 @@ class Ticker extends React.Component {
     });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate', {
+      props: this.props,
+      state: this.state,
+      prevProps,
+      prevState,
+    });
+  }
+
+  shouldComponentUpdate() {
+    console.log('shouldComponentUpdate');
+    return true;
+  }
+
   componentWillUnmount() {
     console.log('unmounting!!!!!!!');
     clearInterval(this.interval);
@@ -55,7 +69,7 @@ class Title extends React.Component {
 
 class Header extends React.Component {
   componentWillMount() {
-    console.log('MOUNTING Header');
+    // console.log('MOUNTING Header');
   }
 
   render() {
@@ -97,6 +111,7 @@ class App extends React.Component {
             <li key={i}>{i}</li>
           ))}
         </ul>
+        <Ticker />
       </div>
     );
   }

@@ -11,8 +11,6 @@ export default class Component {
     this.state = state;
 
     if (this.shouldComponentUpdate(this.props, state)) {
-      // TODO: do we need this?
-      //this.componentWillReceiveProps(this.props, state);
       this.forceUpdate();
     }
 
@@ -20,10 +18,16 @@ export default class Component {
   };
 
   forceUpdate = () => {
+    const prevProps = this.props;
+    const prevState = this.state;
+    this.componentWillReceiveProps(this.props, this.state);
+
     const nextVNode = this.render(this.props, this.state);
     nextVNode._root = this._vnode._root;
     reconcileTree(nextVNode, this._vnode._prevVNode);
     this._vnode._prevVNode = nextVNode;
+
+    this.componentDidUpdate(prevProps, prevState);
   };
 
   // lifecycle methods
