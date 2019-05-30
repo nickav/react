@@ -8,7 +8,7 @@ import {
 
 const computeKey = (vnode, i) => {
   if (vnode && vnode.props && vnode.props.key) {
-    return `__user__.${vnode.props.key}-${i}`;
+    return vnode.props.key;
   }
 
   return `__react__.${

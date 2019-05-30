@@ -55,20 +55,41 @@ export const renderVNode = (vnode, renderNode) => {
   throw `Unknown component: ${vnode}`;
 };
 
+const setElementProp = (el, key, value) => {
+  if (key.startsWith('on')) {
+    el.addEventListener(key.slice(2).toLowerCase(), value);
+  } else {
+    el.setAttribute(key, value);
+  }
+};
+
+const removeElementProp = (el, key, value) => {
+  if (key.startsWith('on')) {
+    el.removeEventListener(key.slice(2).toLowerCase(), value);
+  } else {
+    el.removeAttribute(key);
+  }
+};
+
 export const updateElementProps = (el, nextProps, prevProps) => {
   // remove old props
   prevProps = prevProps || {};
-  Object.keys(prevProps).forEach(
-    (key) => !nextProps.hasOwnProperty(key) && el.removeAttribute(key)
-  );
+  Object.keys(prevProps).forEach((key) => {
+    if (!nextProps.hasOwnProperty(key)) {
+      removeElementProp(el, key, prevProps[key]);
+    }
+  });
 
   // update new props
   nextProps = nextProps || {};
-  Object.keys(nextProps).forEach(
-    (key) =>
+  Object.keys(nextProps).forEach((key) => {
+    if (
       (!prevProps.hasOwnProperty(key) || prevProps[key] !== nextProps[key]) &&
-      el.setAttribute(key, nextProps[key])
-  );
+      key !== 'key'
+    ) {
+      setElementProp(el, key, nextProps[key]);
+    }
+  });
 };
 
 // vnode -> DOM Element

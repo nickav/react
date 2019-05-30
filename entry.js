@@ -76,18 +76,23 @@ class App extends React.Component {
       <div>
         <input
           {...(!flag ? { 'data-first': true } : { 'data-second': true })}
+          onInput={console.log}
         />
         <ul>
           {Array.from({ length: 10 }).map((_, i) => (
             <li key={i}>{i}</li>
           ))}
         </ul>
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i}>{i}</div>
-        ))}
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i}>{i * i}</div>
-        ))}
+        <div>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i}>{i}</div>
+          ))}
+        </div>
+        <div>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i}>{i * i}</div>
+          ))}
+        </div>
       </div>
     );
   }
