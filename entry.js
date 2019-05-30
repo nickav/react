@@ -17,7 +17,7 @@ class Ticker extends React.Component {
       props: this.props,
       state: this.state,
       nextProps,
-      nextState
+      nextState,
     });
   }
 
@@ -69,34 +69,21 @@ class App extends React.Component {
   componentDidMount() {
     setTimeout(() => this.setState({ flag: true }), 2000);
   }
-  /**
- * 
-      <div class="App" style="background: red;">
-        {Math.random()}
-        <input />
-        <Header title={flag ? 'hidden' : 'visible'} />
-      </div>
- */
+
   render(_, { flag }) {
     console.log('App render!', flag);
     return (
       <div>
-        <input {...(flag ? { 'data-first': true } : { 'data-second': true })} />
+        <input
+          {...(!flag ? { 'data-first': true } : { 'data-second': true })}
+        />
       </div>
     );
   }
 }
 
 const tree = <App />;
-
-//const tree = <div><div></div></div>
-
-//const Title = () => createElement('div', { class: 'title' }, 'title');
-
-// const tree = createElement(Ticker, null, createElement(Ticker, null, createElement('div', null, "yo")));
+window.tree = tree;
 
 // bootstrap
 React.render(tree, document.getElementById('app'));
-
-window.tree = tree;
-console.log(tree);

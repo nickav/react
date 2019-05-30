@@ -1,11 +1,10 @@
-import { renderVNode, renderDOM, isLiteralNode } from './render';
-
-const objDiff = (o1, o2) =>
-  Object.keys(o2).reduce((diff, key) => {
-    if (!key in o2) diff[key] = o2[key];
-    if (o1[key] !== o2[key]) diff[key] = o2[key];
-    return diff;
-  }, {});
+import {
+  renderVNode,
+  renderDOM,
+  isLiteralNode,
+  isComponentNode,
+  updateElementProps,
+} from './render';
 
 const computeKey = (vnode, i) => {
   if (vnode && vnode.props && vnode.props.key) {
@@ -17,7 +16,7 @@ const computeKey = (vnode, i) => {
   }.${i}`;
 };
 
-const computeChildKeyMap = arr =>
+const computeChildKeyMap = (arr) =>
   arr.reduce(
     (memo, child, i) => ((memo[computeKey(child, i)] = child), memo),
     {}
@@ -105,7 +104,7 @@ const reconcileTree = (nextTree, prevTree) => {
         continue;
       }
 
-      if (prevChild && prevChild._inst) {
+      if (isComponentNode(prevChild)) {
         const prevProps = prevChild._inst.props;
         const prevState = prevChild._inst.state;
         const nextProps = child.props;
@@ -129,23 +128,7 @@ const reconcileTree = (nextTree, prevTree) => {
           const parent = prevTree._root;
           parent.childNodes[i].replaceWith(html);
         } else {
-          // update html attributes
-          const nextProps = nextVNode.props || {};
-          const prevProps = prevChild.props || {};
-
-          Object.keys(prevProps).forEach(oldProp => {
-            prevChild._root.removeAttribute(oldProp);
-          });
-
-          Object.keys(nextProps).forEach(prop => {
-            prevChild._root.setAttribute(prop, nextProps[prop]);
-          });
-
-          // Object.keys(props).forEach(k => {
-          //   if (nextProps.entries.map)
-          //     prevChild._root.setAttribute(k, props[k]);
-          // });
-
+          updateElementProps(prevChild._root, nextVNode.props, prevChild.props);
           reconcileTree(nextVNode, prevChild);
         }
       }

@@ -1,23 +1,23 @@
 import Component from './Component';
 
-export const getComponentProps = vnode => ({
+export const getComponentProps = (vnode) => ({
   ...vnode.props,
-  children: vnode.children || props.children
+  children: vnode.children || props.children,
 });
 
-export const isEmptyNode = vnode =>
+export const isEmptyNode = (vnode) =>
   vnode === null || typeof vnode === 'boolean';
 
-export const isTextNode = vnode =>
+export const isTextNode = (vnode) =>
   typeof vnode === 'string' || typeof vnode === 'number';
 
-export const isLiteralNode = vnode => isTextNode(vnode) || isEmptyNode(vnode);
+export const isLiteralNode = (vnode) => isTextNode(vnode) || isEmptyNode(vnode);
 
-export const isHTMLNode = vnode => typeof vnode.type === 'string';
+export const isHTMLNode = (vnode) => typeof vnode.type === 'string';
 
-export const isComponentNode = vnode => Component.isPrototypeOf(vnode.type);
+export const isComponentNode = (vnode) => Component.isPrototypeOf(vnode.type);
 
-export const isFunctionalNode = vnode => typeof vnode.type === 'function';
+export const isFunctionalNode = (vnode) => typeof vnode.type === 'function';
 
 // vnode -> renderNode
 export const renderVNode = (vnode, renderNode) => {
@@ -55,6 +55,14 @@ export const renderVNode = (vnode, renderNode) => {
   throw `Unknown component: ${vnode}`;
 };
 
+export const updateElementProps = (el, nextProps, prevProps) => {
+  prevProps = prevProps || {};
+  Object.keys(prevProps).forEach((key) => el.removeAttribute(key));
+
+  nextProps = nextProps || {};
+  Object.keys(nextProps).forEach((key) => el.setAttribute(key, nextProps[key]));
+};
+
 // vnode -> DOM Element
 export const renderDOM = (vnode, render) => {
   // null and boolean are just comments (for debugging)
@@ -72,11 +80,10 @@ export const renderDOM = (vnode, render) => {
   vnode._root = n;
 
   // copy attributes onto the new node:
-  const props = vnode.props || {};
-  Object.keys(props).forEach(k => n.setAttribute(k, props[k]));
+  updateElementProps(n, vnode.props);
 
   // render children
-  vnode.children.forEach(child => n.appendChild(render(child, renderDOM)));
+  vnode.children.forEach((child) => n.appendChild(render(child, renderDOM)));
 
   return n;
 };
