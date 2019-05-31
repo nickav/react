@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack.config.js --port 3000 --mode development"
+    "dist": "webpack -p --mode production",
+    "start": "webpack-dev-server --port 3000 --mode development"
   },
   "dependencies": {
     "@babel/core": "^7.4.5",

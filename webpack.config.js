@@ -6,24 +6,32 @@ module.exports = {
   output: {
     path: __dirname + '/dist',
     publicPath: '/',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   devServer: {
-    contentBase: '.'
+    contentBase: '.',
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader']
-      }
-    ]
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              plugins: ['@babel/plugin-proposal-class-properties'],
+              presets: ['@babel/preset-env', '@babel/preset-react'],
+            },
+          },
+        ],
+      },
+    ],
   },
   resolve: {
     extensions: ['*', '.js', '.jsx'],
     alias: {
-      react: path.resolve(__dirname, './src/index.js')
-    }
-  }
+      react: path.resolve(__dirname, './src/index.js'),
+    },
+  },
 };
