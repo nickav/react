@@ -84,6 +84,16 @@ class Header extends React.Component {
 
 const MyName = (props) => <h1>{props.name}</h1>;
 
+class DefaultProp extends React.Component {
+  static defaultProps = {
+    name: 'Bob',
+  };
+
+  render() {
+    return <div>{this.props.name}</div>;
+  }
+}
+
 class App extends React.Component {
   state = { flag: false };
 
@@ -97,6 +107,8 @@ class App extends React.Component {
     return (
       <div class="App" ref={(root) => (this.div = root)}>
         <MyName ref={(el) => (this.fn = el)} name={flag ? 'slim' : 'shady'} />
+        <DefaultProp />
+        <DefaultProp name="Barb" />
         <Title
           title="HELLO"
           ref={(el) => (this.component = el)}

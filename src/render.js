@@ -15,6 +15,7 @@ const dirtyRenderVNode = (vnode, nextVNode, renderNode) => {
 };
 
 export const getComponentProps = (vnode) => ({
+  ...(vnode.type.defaultProps || {}),
   ...vnode.props,
   children: vnode.children || props.children,
 });
