@@ -57,10 +57,14 @@ export const updateElementProps = (el, nextProps, prevProps) => {
   });
 };
 
-// TODO: maybe implement handy api thing?
-const createListeners = (el, listeners = {}) => {
-  // unbind listeners
-  return () => {};
-};
+export const createListeners = (el, listeners = {}, options = false) => {
+  Object.keys(listeners).forEach((key) =>
+    el.addEventListener(key, listeners[key], options)
+  );
 
-// const unlisten = createListeners(el, { onKeyDown: console.log });
+  return () => {
+    Object.keys(listeners).forEach((key) =>
+      el.removeEventListener(key, listeners[key], options)
+    );
+  };
+};
