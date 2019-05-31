@@ -46,10 +46,11 @@ export const updateElementProps = (el, nextProps, prevProps) => {
   Object.keys(nextProps).forEach((key) => {
     if (
       (!prevProps.hasOwnProperty(key) || prevProps[key] !== nextProps[key]) &&
-      key !== 'key'
+      key !== 'key' &&
+      key !== 'ref'
     ) {
       if (isEventListener(key) && prevProps.hasOwnProperty(key)) {
-        //removeElementProp(el, key, prevProps[key]);
+        removeElementProp(el, key, prevProps[key]);
       }
       setElementProp(el, key, nextProps[key]);
     }
