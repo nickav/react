@@ -15,3 +15,10 @@ export const isComponentNode = (vnode) =>
 
 export const isFunctionalNode = (vnode) =>
   vnode && typeof vnode.type === 'function';
+
+export const isValidElement = (vnode) =>
+  isEmptyNode(vnode) ||
+  isTextNode(vnode) ||
+  isHTMLNode(vnode) ||
+  isComponentNode(vnode) ||
+  isFunctionalNode(vnode);

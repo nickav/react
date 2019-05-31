@@ -57,7 +57,7 @@ export const updateElementProps = (el, nextProps, prevProps) => {
   });
 };
 
-export const createListeners = (el, listeners = {}, options = false) => {
+export const bindListeners = (el, listeners = {}, options = false) => {
   Object.keys(listeners).forEach((key) =>
     el.addEventListener(key, listeners[key], options)
   );
