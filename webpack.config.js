@@ -1,10 +1,13 @@
 const path = require('path');
 
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
-  entry: './entry.js',
+  entry: isProd ? './src/index.js' : './entry.js',
   devtool: 'eval-source-map',
   output: {
     path: __dirname + '/dist',
+    pathinfo: !isProd,
     publicPath: '/',
     filename: 'bundle.js',
   },

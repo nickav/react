@@ -1,5 +1,6 @@
 import { renderVNode, renderDOM, getComponentProps, setRef } from './render';
 import { updateElementProps } from './dom';
+import { shallowEqual } from './functions';
 import * as t from './types';
 
 const computeKey = (vnode, i) => {
@@ -24,7 +25,7 @@ const shouldVNodeUpdate = (nextVNode, prevVNode) => {
     return prevVNode !== nextVNode;
   }
 
-  return true;
+  return !shallowEqual(nextVNode, prevVNode);
 };
 
 // where each tree is a vnode
