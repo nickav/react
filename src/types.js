@@ -16,6 +16,8 @@ export const isComponentNode = (vnode) =>
 export const isFunctionalNode = (vnode) =>
   vnode && typeof vnode.type === 'function';
 
+export const isFragmentNode = (vnode) => Array.isArray(vnode);
+
 export const isValidElement = (vnode) =>
   isEmptyNode(vnode) ||
   isTextNode(vnode) ||

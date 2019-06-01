@@ -26,16 +26,12 @@ export const renderVNode = (vnode, renderNode) => {
     vnode = vnode();
   }
 
-  if (t.isEmptyNode(vnode)) {
+  if (t.isEmptyNode(vnode) || t.isHTMLNode(vnode) || t.isFragmentNode(vnode)) {
     return renderNode(vnode, renderVNode);
   }
 
   if (t.isTextNode(vnode)) {
     return renderNode(vnode.toString(), renderVNode);
-  }
-
-  if (t.isHTMLNode(vnode)) {
-    return renderNode(vnode, renderVNode);
   }
 
   if (t.isComponentNode(vnode)) {
@@ -75,6 +71,13 @@ export const renderDOM = (vnode, render) => {
   // strings just convert to #text nodes
   if (t.isTextNode(vnode)) {
     return document.createTextNode(vnode);
+  }
+
+  // fragments are not real elements in the dom
+  if (t.isFragmentNode(vnode)) {
+    const fragment = document.createDocumentFragment();
+    vnode.forEach((e) => fragment.appendChild(render(e, renderDOM)));
+    return fragment;
   }
 
   // create a DOM element with the nodeName of our VDOM element:
