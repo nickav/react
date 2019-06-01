@@ -1,0 +1,23 @@
+html, body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+html, body, #app, .App {
+  height: 100%;
+}
+
+.slideshow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.slide {
+  text-align: center;
+}
+
+.slide .title {
+  font-size: 24px;
+}

@@ -1,14 +1,14 @@
 const path = require('path');
 
 module.exports = {
-  entry: path.resolve(__dirname, './entry.js'),
+  entry: path.resolve(__dirname, './src/index.jsx'),
   devtool: 'eval-source-map',
   output: {
     publicPath: '/',
     filename: 'bundle.js',
   },
   devServer: {
-    contentBase: path.resolve(__dirname),
+    contentBase: path.resolve(__dirname, './src'),
   },
   module: {
     rules: [
@@ -24,6 +24,10 @@ module.exports = {
             },
           },
         ],
+      },
+      {
+        test: /\.(css)$/,
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
