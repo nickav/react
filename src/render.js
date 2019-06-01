@@ -22,6 +22,10 @@ export const getComponentProps = (vnode) => ({
 
 // vnode -> renderNode
 export const renderVNode = (vnode, renderNode) => {
+  if (typeof vnode === 'function') {
+    vnode = vnode();
+  }
+
   if (t.isEmptyNode(vnode)) {
     return renderNode(vnode, renderVNode);
   }

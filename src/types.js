@@ -1,7 +1,7 @@
 import Component from './Component';
 
 export const isEmptyNode = (vnode) =>
-  vnode === null || typeof vnode === 'boolean';
+  vnode == null || typeof vnode === 'boolean';
 
 export const isTextNode = (vnode) =>
   typeof vnode === 'string' || typeof vnode === 'number';

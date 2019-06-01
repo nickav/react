@@ -115,8 +115,12 @@ const reconcileTree = (nextTree, prevTree) => {
         _inst.componentWillReceiveProps(nextProps, nextState);
         // update the props
         _inst.props = nextProps;
+        // update internals
+        nextVNode._inst = prevVNode._inst;
+        nextVNode._root = prevVNode._root;
         // render
         const tempVNode = _inst.render(nextProps, nextState);
+        nextVNode._prevVNode = prevVNode;
         reconcileTree(tempVNode, prevVNode._prevVNode);
         setRef(tempVNode);
 

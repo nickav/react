@@ -29,11 +29,16 @@ export default class Slideshow extends React.Component {
 
   onKeyDown = (e) => {
     switch (e.key) {
+      case ' ':
+      case 'd':
+      case 'ArrowRight':
       case 'n': {
         this.nextSlide();
         return;
       }
 
+      case 'a':
+      case 'ArrowLeft':
       case 'p': {
         this.prevSlide();
         return;
@@ -57,8 +62,10 @@ export default class Slideshow extends React.Component {
     const { index } = this.state;
     const { slides } = this.props;
     const Slide = slides[index];
-    console.log({ index, Slide });
-    // TODO: allow this to be rendered with the tag syntax too?
-    return <div class="slideshow">{Slide}</div>;
+    return (
+      <div class="slideshow">
+        <Slide />
+      </div>
+    );
   }
 }
