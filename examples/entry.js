@@ -123,7 +123,6 @@ class App extends React.Component {
             <li key={i}>{i}</li>
           ))}
         </ul>
-        <Ticker />
       </div>
     );
   }

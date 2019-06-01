@@ -25,7 +25,11 @@ const shouldVNodeUpdate = (nextVNode, prevVNode) => {
     return prevVNode !== nextVNode;
   }
 
-  return !shallowEqual(nextVNode, prevVNode);
+  return (
+    nextVNode.type !== prevVNode.type ||
+    !shallowEqual(nextVNode.props, prevVNode.props) ||
+    !shallowEqual(nextVNode.children, prevVNode.children)
+  );
 };
 
 // where each tree is a vnode

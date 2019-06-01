@@ -1,13 +1,14 @@
 const path = require('path');
-const packageJson = require('./package.json');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: path.resolve(__dirname, './entry.js'),
+  devtool: 'eval-source-map',
   output: {
-    path: __dirname + '/dist',
-    pathinfo: false,
     publicPath: '/',
-    filename: `${packageJson.name}.js`,
+    filename: 'bundle.js',
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname),
   },
   module: {
     rules: [
@@ -19,10 +20,17 @@ module.exports = {
             loader: 'babel-loader',
             options: {
               plugins: ['@babel/plugin-proposal-class-properties'],
+              presets: ['@babel/preset-env', '@babel/preset-react'],
             },
           },
         ],
       },
     ],
+  },
+  resolve: {
+    extensions: ['*', '.js', '.jsx'],
+    alias: {
+      react: path.resolve(__dirname, '../src/index.js'),
+    },
   },
 };
