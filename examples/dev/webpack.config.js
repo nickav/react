@@ -30,7 +30,7 @@ module.exports = {
   resolve: {
     extensions: ['*', '.js', '.jsx'],
     alias: {
-      react: path.resolve(__dirname, '../src/index.js'),
+      react: path.resolve(__dirname, '../../src/index.js'),
     },
   },
 };

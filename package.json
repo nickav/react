@@ -1,8 +1,23 @@
 {
   "name": "react",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/react.js",
+  "author": "Nick Aversano",
+  "contributors": [
+    "Anushri Adhia <anushri.adhia@gmail.com>",
+    "Alan Chu <chu.chuyalan@gmail.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickav/react.git"
+  },
   "scripts": {
     "dist": "NODE_ENV=production webpack -p --mode production",
-    "start": "webpack-dev-server --config ./examples/webpack.config.js --port 3000 --mode development"
+    "start": "yarn start:dev",
+    "start:dev": "webpack-dev-server --config ./examples/dev/webpack.config.js --port 3000 --mode development",
+    "slides": "webpack-dev-server --config ./examples/slides/webpack.config.js --port 3000 --mode development"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -13,5 +28,11 @@
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.4.1"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "arrowParens": "always"
   }
 }
