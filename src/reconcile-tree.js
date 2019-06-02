@@ -104,7 +104,7 @@ const reconcileTree = (nextTree, prevTree) => {
         continue;
       }
 
-      if (t.isComponentNode(prevVNode)) {
+      if (t.isComponent(prevVNode)) {
         const _inst = prevVNode._inst;
         const prevProps = getComponentProps(prevVNode);
         const prevState = _inst.state;
@@ -142,14 +142,15 @@ const reconcileTree = (nextTree, prevTree) => {
         continue;
       }
 
-      if (t.isFunctionalNode(nextVNode)) {
+      if (t.isFunctionalComponent(nextVNode)) {
         const tempVNode = nextVNode.type(getComponentProps(nextVNode));
         reconcileTree(tempVNode, prevVNode._prevVNode);
         setRef(tempVNode);
         continue;
       }
 
-      throw `Unknown component: ${vnode}`;
+      console.error('reconcileTree', nextVNode);
+      throw `Unknown component: ${vnode.type}`;
     }
   }
 };

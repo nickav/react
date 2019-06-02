@@ -34,7 +34,7 @@ export const renderVNode = (vnode, renderNode) => {
     return renderNode(vnode.toString(), renderVNode);
   }
 
-  if (t.isComponentNode(vnode)) {
+  if (t.isComponent(vnode)) {
     const props = getComponentProps(vnode);
     const _inst = new vnode.type(props);
     _inst._vnode = vnode;
@@ -50,7 +50,7 @@ export const renderVNode = (vnode, renderNode) => {
     );
   }
 
-  if (t.isFunctionalNode(vnode)) {
+  if (t.isFunctionalComponent(vnode)) {
     return dirtyRenderVNode(
       vnode,
       vnode.type(getComponentProps(vnode)),
@@ -58,7 +58,8 @@ export const renderVNode = (vnode, renderNode) => {
     );
   }
 
-  throw `Unknown component: ${vnode}`;
+  console.error('renderVNode', vnode);
+  throw `Unknown component: ${vnode.type}`;
 };
 
 // vnode -> DOM Element

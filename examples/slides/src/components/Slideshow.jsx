@@ -64,7 +64,7 @@ export default class Slideshow extends React.Component {
     const Slide = slides[index];
     return (
       <div class="slideshow">
-        <Slide />
+        {React.isValidElement(Slide) ? Slide : <Slide key={`slide-${index}`} />}
       </div>
     );
   }

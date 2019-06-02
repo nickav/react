@@ -1,6 +1,8 @@
 import * as React from 'react';
 import Slideshow, { Slide } from './Slideshow';
 
+import './App.css';
+
 const createElementSrc = `
 const createElement = (type, props = null, ...children) => ({
   type,
@@ -8,6 +10,12 @@ const createElement = (type, props = null, ...children) => ({
   children: [].concat(...children) || null,
 });
 `;
+
+const Code = ({ children }) => (
+  <pre class="code">
+    <code>{children}</code>
+  </pre>
+);
 
 export default class App extends React.Component {
   render() {
@@ -20,7 +28,7 @@ export default class App extends React.Component {
       },
       {
         title: 'WTF is JSX?',
-        children: () => <code>{createElementSrc}</code>,
+        children: () => <Code>{createElementSrc}</Code>,
       },
     ];
 
@@ -28,7 +36,7 @@ export default class App extends React.Component {
       <div class="App">
         <Slideshow
           slides={slides.map((slide, i) => (
-            <Slide key={i}>
+            <Slide key={`slide-${i}`}>
               <Slide.Title title={slide.title} />
               {slide.children}
             </Slide>

@@ -4,13 +4,10 @@ export { default as PureComponent } from './PureComponent';
 export { bindListeners } from './dom';
 export { isValidElement } from './types';
 
-export const createElement = (type, props = null, ...children) =>
-  typeof type === 'object'
-    ? type
-    : {
-        type,
-        props,
-        children: [].concat(...children) || null,
-      };
+export const createElement = (type, props = null, ...children) => ({
+  type,
+  props,
+  children: [].concat(...children) || null,
+});
 
 export const h = createElement;

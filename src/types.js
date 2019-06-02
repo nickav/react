@@ -10,17 +10,18 @@ export const isLiteralNode = (vnode) => isTextNode(vnode) || isEmptyNode(vnode);
 
 export const isHTMLNode = (vnode) => vnode && typeof vnode.type === 'string';
 
-export const isComponentNode = (vnode) =>
+export const isFragmentNode = (vnode) => Array.isArray(vnode);
+
+export const isComponent = (vnode) =>
   vnode && Component.isPrototypeOf(vnode.type);
 
-export const isFunctionalNode = (vnode) =>
+export const isFunctionalComponent = (vnode) =>
   vnode && typeof vnode.type === 'function';
-
-export const isFragmentNode = (vnode) => Array.isArray(vnode);
 
 export const isValidElement = (vnode) =>
   isEmptyNode(vnode) ||
   isTextNode(vnode) ||
   isHTMLNode(vnode) ||
-  isComponentNode(vnode) ||
-  isFunctionalNode(vnode);
+  isFragmentNode(vnode) ||
+  isComponent(vnode) ||
+  isFunctionalComponent(vnode);
