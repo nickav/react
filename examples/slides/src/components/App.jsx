@@ -1,12 +1,8 @@
 import React from 'react';
+
+import Link from './Link';
 import Slideshow, { Slide } from './Slideshow';
 import Code from './Code';
-
-const createElementSrc = `const createElement = (type, props = null, ...children) => ({
-  type,
-  props,
-  children: [].concat(...children) || null,
-});`;
 
 export default class App extends React.Component {
   render() {
@@ -19,7 +15,25 @@ export default class App extends React.Component {
       },
       {
         title: 'WTF is JSX?',
-        children: () => <Code class="javascript">{createElementSrc}</Code>,
+        children: () => [
+          <Code language="html">{`<div><h1 style="color: red">Hello, world!</h1></div>`}</Code>,
+          <div>
+            <h1 style="color: red">Hello, world!</h1>
+          </div>,
+          <Code language="javascript">{`const createElement = (type, props = null, ...children) => ({
+  type,
+  props,
+  children: [].concat(...children) || null,
+});`}</Code>,
+          <div>
+            <Link to="https://babeljs.io/">Babel</Link> transforms any html tags
+            in JSX into...
+          </div>,
+          <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'))`}</Code>,
+          <Link to="https://jasonformat.com/wtf-is-jsx/">
+            https://jasonformat.com/wtf-is-jsx/
+          </Link>,
+        ],
       },
     ];
 

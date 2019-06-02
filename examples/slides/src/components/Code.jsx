@@ -21,10 +21,10 @@ export default class Code extends React.Component {
   };
 
   render() {
-    const { children, class: cn } = this.props;
+    const { children, class: cn, language } = this.props;
     return (
-      <pre class="code" ref={this.setEl}>
-        <code class={`hljs ${cn}`}>{children}</code>
+      <pre class={`code ${cn}`} ref={this.setEl}>
+        <code class={`hljs ${language}`}>{children}</code>
       </pre>
     );
   }
