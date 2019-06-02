@@ -1,21 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import Slideshow, { Slide } from './Slideshow';
+import Code from './Code';
 
-import './App.css';
-
-const createElementSrc = `
-const createElement = (type, props = null, ...children) => ({
+const createElementSrc = `const createElement = (type, props = null, ...children) => ({
   type,
   props,
   children: [].concat(...children) || null,
-});
-`;
-
-const Code = ({ children }) => (
-  <pre class="code">
-    <code>{children}</code>
-  </pre>
-);
+});`;
 
 export default class App extends React.Component {
   render() {
@@ -28,7 +19,7 @@ export default class App extends React.Component {
       },
       {
         title: 'WTF is JSX?',
-        children: () => <Code>{createElementSrc}</Code>,
+        children: () => <Code class="javascript">{createElementSrc}</Code>,
       },
     ];
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 class Ticker extends React.Component {
   state = { counter: 0 };
