@@ -11,10 +11,6 @@ export default class App extends React.Component {
         title: '⚛ react from scratch',
       },
       {
-        title: '⚛ react from scratch',
-        children: <h2>aka rct.js</h2>,
-      },
-      {
         title: 'by anushiri, alan and nick',
       },
       {
@@ -29,24 +25,9 @@ export default class App extends React.Component {
             JSX files into:
           </div>,
           <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'))`}</Code>,
-          <div>So we can define that function...</div>,
-          <Code language="javascript">{`// returns a vnode
-const createElement = (type, props = null, ...children) => ({
-  type,
-  props,
-  children: [].concat(...children) || null,
-});`}</Code>,
           <Link to="https://jasonformat.com/wtf-is-jsx/">
             https://jasonformat.com/wtf-is-jsx/
           </Link>,
-        ],
-      },
-      {
-        title: 'types',
-        children: [
-          <Code language="javascript">
-            {require('!!raw-loader!react/types').default}
-          </Code>,
         ],
       },
       {
@@ -79,7 +60,8 @@ const createElement = (type, props = null, ...children) => ({
         ],
       },
       {
-        title: 'reconciling!',
+        title: '✅ reconciling!',
+        children: [<div>We know what the previous and next states are...</div>],
       },
       {
         title: 'demo',

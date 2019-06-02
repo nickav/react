@@ -1,23 +1,19 @@
-html, body {
-  margin: 0;
-  font-family: sans-serif;
-}
-
-html, body, #app, .App {
-  height: 100%;
-}
-
 .slideshow {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
+  padding: 20px;
 }
 
 .slide {
   text-align: center;
+  width: 100%;
+  max-width: 800px;
+  max-height: 100%;
 }
 
 .slide .title {
   font-size: 24px;
+  margin-bottom: 20px;
 }

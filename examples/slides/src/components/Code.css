@@ -1,3 +1,8 @@
 .code {
   text-align: left;
+  white-space: pre-wrap;
+}
+
+.code > code {
+  padding: 10px;
 }

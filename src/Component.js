@@ -30,19 +30,25 @@ export default class Component {
     this.componentDidUpdate(prevProps, prevState);
   };
 
-  // lifecycle methods
-  componentWillMount() {}
-  componentDidMount() {}
-  componentWillUnmount() {}
-  componentWillReceiveProps(nextProps, nextState) {}
-  shouldComponentUpdate(nextProps, nextState) {
-    return true;
-  }
-  componentDidUpdate(prevProps, prevState) {}
-
   getRoot() {
     return this._vnode._root;
   }
+
+  // lifecycle methods
+
+  componentWillMount() {}
+
+  componentDidMount() {}
+
+  componentWillUnmount() {}
+
+  componentWillReceiveProps(nextProps, nextState) {}
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return true;
+  }
+
+  componentDidUpdate(prevProps, prevState) {}
 
   render() {}
 }
