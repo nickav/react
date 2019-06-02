@@ -1,0 +1,12 @@
+html, body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+html, body, #app, .App {
+  height: 100%;
+}
+
+ul {
+  text-align: left;
+}

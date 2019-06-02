@@ -11,28 +11,117 @@ export default class App extends React.Component {
         title: '⚛ react from scratch',
       },
       {
+        title: '⚛ react from scratch',
+        children: <h2>aka rct.js</h2>,
+      },
+      {
         title: 'by anushiri, alan and nick',
       },
       {
         title: 'WTF is JSX?',
-        children: () => [
+        children: [
           <Code language="html">{`<div><h1 style="color: red">Hello, world!</h1></div>`}</Code>,
           <div>
             <h1 style="color: red">Hello, world!</h1>
           </div>,
-          <Code language="javascript">{`const createElement = (type, props = null, ...children) => ({
+          <div>
+            <Link to="https://babeljs.io/">Babel</Link> transforms html tags in
+            JSX files into:
+          </div>,
+          <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'))`}</Code>,
+          <div>So we can define that function...</div>,
+          <Code language="javascript">{`// returns a vnode
+const createElement = (type, props = null, ...children) => ({
   type,
   props,
   children: [].concat(...children) || null,
 });`}</Code>,
-          <div>
-            <Link to="https://babeljs.io/">Babel</Link> transforms any html tags
-            in JSX into...
-          </div>,
-          <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'))`}</Code>,
           <Link to="https://jasonformat.com/wtf-is-jsx/">
             https://jasonformat.com/wtf-is-jsx/
           </Link>,
+        ],
+      },
+      {
+        title: 'types',
+        children: [
+          <Code language="javascript">
+            {require('!!raw-loader!react/types').default}
+          </Code>,
+        ],
+      },
+      {
+        title: '🖼 rendering',
+        children: [
+          <Code language="javascript">
+            {[
+              `document.createElement('div');`,
+              `document.createComment('(null)');`,
+              `document.createTextNode('Hello, world!');`,
+              `document.createDocumentFragment();`,
+            ].join('\n')}
+          </Code>,
+          <Link
+            to="https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement"
+            text="MDN document.createElement"
+          />,
+        ],
+      },
+      {
+        title: '🤔 updating the rendered html',
+        children: [
+          <ul>
+            <li>re-render the entire page after any change</li>
+            <li>
+              use window.requestAnimationFrame to render and wait for changes
+            </li>
+          </ul>,
+          <div>¯\_(ツ)_/¯</div>,
+        ],
+      },
+      {
+        title: 'reconciling!',
+      },
+      {
+        title: 'demo',
+      },
+      {
+        title: 'React',
+        children: [
+          <Code language="javascript">
+            {require('!!raw-loader!react/React').default}
+          </Code>,
+        ],
+      },
+      {
+        title: 'types',
+        children: [
+          <Code language="javascript">
+            {require('!!raw-loader!react/types').default}
+          </Code>,
+        ],
+      },
+      {
+        title: 'render',
+        children: [
+          <Code language="javascript">
+            {require('!!raw-loader!react/render').default}
+          </Code>,
+        ],
+      },
+      {
+        title: 'Component',
+        children: [
+          <Code language="javascript">
+            {require('!!raw-loader!react/Component').default}
+          </Code>,
+        ],
+      },
+      {
+        title: 'reconcileTree',
+        children: [
+          <Code language="javascript">
+            {require('!!raw-loader!react/reconcile-tree').default}
+          </Code>,
         ],
       },
     ];

@@ -29,19 +29,21 @@ export default class Slideshow extends React.Component {
 
   onKeyDown = (e) => {
     switch (e.key) {
-      case ' ':
+      case 'Enter':
+      case ' ': {
+        return e.shiftKey ? this.prevSlide() : this.nextSlide();
+      }
+
       case 'd':
       case 'ArrowRight':
       case 'n': {
-        this.nextSlide();
-        return;
+        return this.nextSlide();
       }
 
       case 'a':
       case 'ArrowLeft':
       case 'p': {
-        this.prevSlide();
-        return;
+        return this.prevSlide();
       }
     }
   };
