@@ -4,12 +4,12 @@ class Ticker extends React.Component {
   state = { counter: 0 };
 
   componentWillMount() {
-    console.log('will mount...', this, this._vnode._root);
+    console.log('will mount...', this, this.getRef());
     this.interval = setInterval(this.tick, 1000);
   }
 
   componentDidMount() {
-    console.log('mounted!', this, this._vnode._root);
+    console.log('mounted!', this, this.getRef());
   }
 
   componentWillReceiveProps(nextProps, nextState) {

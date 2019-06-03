@@ -23,15 +23,15 @@ export default class Component {
     this.componentWillReceiveProps(this.props, this.state);
 
     const nextVNode = this.render(this.props, this.state);
-    nextVNode._root = this._vnode._root;
+    nextVNode._dom = this._vnode._dom;
     reconcileTree(nextVNode, this._vnode._prevVNode);
     this._vnode._prevVNode = nextVNode;
 
     this.componentDidUpdate(prevProps, prevState);
   };
 
-  getRoot() {
-    return this._vnode._root;
+  getRef() {
+    return this._vnode._dom;
   }
 
   // lifecycle methods

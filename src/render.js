@@ -3,15 +3,15 @@ import { updateElementProps } from './dom';
 
 export const setRef = (vnode) => {
   if (vnode.props && vnode.props.ref) {
-    vnode.props.ref(vnode._inst || vnode._root);
+    vnode.props.ref(vnode._inst || vnode._dom);
   }
 };
 
-const dirtyRenderVNode = (vnode, nextVNode, renderNode) => {
+export const dirtyRenderVNode = (vnode, nextVNode, renderNode) => {
   vnode._prevVNode = nextVNode;
-  vnode._root = renderVNode(vnode._prevVNode, renderNode);
+  vnode._dom = renderVNode(nextVNode, renderNode);
   setRef(vnode);
-  return vnode._root;
+  return vnode._dom;
 };
 
 export const getComponentProps = (vnode) => ({
@@ -83,7 +83,7 @@ export const renderDOM = (vnode, render) => {
 
   // create a DOM element with the nodeName of our VDOM element:
   const n = document.createElement(vnode.type);
-  vnode._root = n;
+  vnode._dom = n;
   setRef(vnode);
 
   // copy attributes onto the new node:

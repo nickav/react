@@ -16,15 +16,15 @@ export default class App extends React.Component {
       {
         title: 'WTF is JSX?',
         children: [
-          <Code language="html">{`<div><h1 style="color: red">Hello, world!</h1></div>`}</Code>,
           <div>
             <h1 style="color: red">Hello, world!</h1>
           </div>,
-          <div>
+          <Code language="html">{`<div><h1 style="color: red">Hello, world!</h1></div>`}</Code>,
+          <p>
             <Link to="https://babeljs.io/">Babel</Link> transforms html tags in
             JSX files into:
-          </div>,
-          <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'))`}</Code>,
+          </p>,
+          <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'));`}</Code>,
           <Link to="https://jasonformat.com/wtf-is-jsx/">
             https://jasonformat.com/wtf-is-jsx/
           </Link>,
