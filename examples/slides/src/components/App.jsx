@@ -3,6 +3,7 @@ import React from 'react';
 import Link from './Link';
 import Slideshow, { Slide } from './Slideshow';
 import Code from './Code';
+import { getFunction } from '../helpers/functions';
 
 export default class App extends React.Component {
   render() {
@@ -11,7 +12,7 @@ export default class App extends React.Component {
         title: '⚛ react from scratch',
       },
       {
-        title: 'by anushiri, alan and nick',
+        title: 'by anushri, alan and nick',
       },
       {
         title: 'WTF is JSX?',
@@ -66,7 +67,21 @@ export default class App extends React.Component {
         title: 'render',
         children: [
           <Code language="javascript">
-            {require('!!raw-loader!react/render').default}
+            {getFunction(
+              require('!!raw-loader!react/render').default,
+              'renderVNode'
+            )}
+          </Code>,
+        ],
+      },
+      {
+        title: 'renderDOM',
+        children: [
+          <Code language="javascript">
+            {getFunction(
+              require('!!raw-loader!react/render').default,
+              'renderDOM'
+            )}
           </Code>,
         ],
       },
