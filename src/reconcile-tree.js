@@ -69,7 +69,10 @@ const reconcileTree = (nextTree, prevTree) => {
       nextVNodeMap.hasOwnProperty(key) && !prevVNodeMap.hasOwnProperty(key);
 
     if (wasAdded) {
-      const html = renderVNode(nextVNode, renderDOM);
+      const mounts = [];
+      const html = renderVNode(nextVNode, renderDOM, mounts);
+
+      mounts.forEach((inst) => inst.componentWillMount());
 
       const parent = nextTree._dom;
       if (parent.childNodes[i]) {
@@ -77,6 +80,8 @@ const reconcileTree = (nextTree, prevTree) => {
       } else {
         parent.appendChild(html);
       }
+
+      mounts.forEach((inst) => inst.componentDidMount());
     }
   }
 

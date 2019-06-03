@@ -13,25 +13,25 @@ export const setRef = (vnode) => {
   }
 };
 
-export const dirtyRenderVNode = (vnode, nextVNode, renderNode) => {
+export const dirtyRenderVNode = (vnode, nextVNode, ...rest) => {
   vnode._prevVNode = nextVNode;
-  vnode._dom = renderVNode(nextVNode, renderNode);
+  vnode._dom = renderVNode(nextVNode, ...rest);
   setRef(vnode);
   return vnode._dom;
 };
 
 // vnode -> renderNode
-export const renderVNode = (vnode, renderNode) => {
+export const renderVNode = (vnode, renderNode, mounts = []) => {
   if (typeof vnode === 'function') {
     vnode = vnode();
   }
 
   if (t.isEmptyNode(vnode) || t.isHTMLNode(vnode) || t.isFragmentNode(vnode)) {
-    return renderNode(vnode, renderVNode);
+    return renderNode(vnode, renderVNode, mounts);
   }
 
   if (t.isTextNode(vnode)) {
-    return renderNode(vnode.toString(), renderVNode);
+    return renderNode(vnode.toString(), renderVNode, mounts);
   }
 
   if (t.isComponent(vnode)) {
@@ -39,20 +39,22 @@ export const renderVNode = (vnode, renderNode) => {
     const inst = new vnode.type(props);
     inst._vnode = vnode;
     vnode._inst = inst;
+    mounts.push(inst);
 
-    if (renderNode === renderDOM) {
-      inst.componentWillMount();
-      setTimeout(() => inst.componentDidMount(), 0);
-    }
-
-    return dirtyRenderVNode(vnode, inst.render(props, inst.state), renderNode);
+    return dirtyRenderVNode(
+      vnode,
+      inst.render(props, inst.state),
+      renderNode,
+      mounts
+    );
   }
 
   if (t.isFunctionalComponent(vnode)) {
     return dirtyRenderVNode(
       vnode,
       vnode.type(getComponentProps(vnode)),
-      renderNode
+      renderNode,
+      mounts
     );
   }
 
@@ -61,7 +63,7 @@ export const renderVNode = (vnode, renderNode) => {
 };
 
 // vnode -> DOM Element
-export const renderDOM = (vnode, render) => {
+export const renderDOM = (vnode, render, ...rest) => {
   // null and boolean are just comments (for debugging)
   if (t.isEmptyNode(vnode)) {
     return document.createComment(`(${vnode})`);
@@ -75,7 +77,7 @@ export const renderDOM = (vnode, render) => {
   // fragments are not real elements in the dom
   if (t.isFragmentNode(vnode)) {
     const fragment = document.createDocumentFragment();
-    vnode.forEach((e) => fragment.appendChild(render(e, renderDOM)));
+    vnode.forEach((e) => fragment.appendChild(render(e, renderDOM, ...rest)));
     return fragment;
   }
 
@@ -88,7 +90,9 @@ export const renderDOM = (vnode, render) => {
   updateElementProps(n, vnode.props);
 
   // render children
-  vnode.children.forEach((child) => n.appendChild(render(child, renderDOM)));
+  vnode.children.forEach((child) =>
+    n.appendChild(render(child, renderDOM, ...rest))
+  );
 
   return n;
 };
@@ -120,7 +124,12 @@ const renderString = (vnode, render) => {
 export const renderToString = (vnode) => renderVNode(vnode, renderString);
 
 const render = (vnode, root) => {
-  root.appendChild(renderVNode(vnode, renderDOM));
+  const mounts = [];
+  const html = renderVNode(vnode, renderDOM, mounts);
+
+  mounts.forEach((inst) => inst.componentWillMount());
+  root.appendChild(html);
+  mounts.forEach((inst) => inst.componentDidMount());
 };
 
 export default render;
