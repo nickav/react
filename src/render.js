@@ -36,20 +36,16 @@ export const renderVNode = (vnode, renderNode) => {
 
   if (t.isComponent(vnode)) {
     const props = getComponentProps(vnode);
-    const _inst = new vnode.type(props);
-    _inst._vnode = vnode;
-    vnode._inst = _inst;
+    const inst = new vnode.type(props);
+    inst._vnode = vnode;
+    vnode._inst = inst;
 
     if (renderNode === renderDOM) {
-      _inst.componentWillMount();
-      setTimeout(() => _inst.componentDidMount(), 0);
+      inst.componentWillMount();
+      setTimeout(() => inst.componentDidMount(), 0);
     }
 
-    return dirtyRenderVNode(
-      vnode,
-      _inst.render(props, _inst.state),
-      renderNode
-    );
+    return dirtyRenderVNode(vnode, inst.render(props, inst.state), renderNode);
   }
 
   if (t.isFunctionalComponent(vnode)) {

@@ -123,26 +123,24 @@ const reconcileTree = (nextTree, prevTree) => {
     }
 
     if (t.isComponent(nextVNode)) {
-      const _inst = prevVNode._inst;
+      const inst = prevVNode._inst;
       const prevProps = getComponentProps(prevVNode);
-      const prevState = _inst.state;
+      const prevState = inst.state;
       const nextProps = getComponentProps(nextVNode);
       const nextState = prevState;
 
       // call lifecycle method
-      _inst.componentWillReceiveProps(nextProps, nextState);
-      // update the props
-      _inst.props = nextProps;
-      // update internals
-      nextVNode._dom = prevVNode._dom;
+      inst.componentWillReceiveProps(nextProps, nextState);
+      // update props and internals
+      inst.props = nextProps;
       nextVNode._inst = prevVNode._inst;
       nextVNode._prevVNode = prevVNode;
       // render
-      const tempVNode = _inst.render(nextProps, nextState);
+      const tempVNode = inst.render(nextProps, nextState);
       reconcileTree(tempVNode, prevVNode._prevVNode);
       setRef(tempVNode);
 
-      _inst.componentDidUpdate(prevProps, prevState);
+      inst.componentDidUpdate(prevProps, prevState);
       continue;
     }
 
