@@ -1,13 +1,16 @@
 export const getFunction = (source, identifier) => {
   const prefixes = ['const', 'let', 'var', 'function'];
-  const startIndex = prefixes
-    .map((prefix) => source.indexOf(prefix + ' ' + identifier))
-    .find((index) => index >= 0);
+  return prefixes
+    .map((prefix) => getBlockAfter(source, prefix + ' ' + identifier))
+    .find((e) => e);
+};
 
-  if (!startIndex) return;
+export const getBlockAfter = (source, after) => {
+  const startIndex = source.indexOf(after);
 
-  let index = source.indexOf('{', startIndex);
+  if (startIndex < 0) return;
 
+  const index = source.indexOf('{', startIndex);
   const endIndex = findMatchingBrace(source, index, '{', '}');
   return source.substring(startIndex, endIndex);
 };

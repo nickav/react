@@ -47,7 +47,7 @@ const reconcileTree = (nextTree, prevTree) => {
   const prevVNodeMap = computeChildKeyMap(prevChildren);
   const nextVNodeMap = computeChildKeyMap(nextChildren);
 
-  // check removed children
+  // handle removed children
   for (let i = prevChildren.length - 1; i >= 0; i--) {
     const prevVNode = prevChildren[i];
     const key = computeKey(prevVNode, i);

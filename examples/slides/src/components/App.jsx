@@ -3,7 +3,7 @@ import React from 'react';
 import Link from './Link';
 import Slideshow, { Slide } from './Slideshow';
 import Code from './Code';
-import { getFunction } from '../helpers/functions';
+import { getFunction, getBlockAfter } from '../helpers/functions';
 
 export default class App extends React.Component {
   render() {
@@ -26,6 +26,7 @@ export default class App extends React.Component {
             JSX files into (with preset-react):
           </p>,
           <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'));`}</Code>,
+          <p>When createElement is defined, can result in:</p>,
           <Code language="javascript">{`{
   "type": "div",
   "props": null,
@@ -41,6 +42,7 @@ export default class App extends React.Component {
     }
   ]
 }`}</Code>,
+          <p>This is what a Virtual DOM is.</p>,
           <Link to="https://jasonformat.com/wtf-is-jsx/">
             https://jasonformat.com/wtf-is-jsx/
           </Link>,
@@ -49,6 +51,10 @@ export default class App extends React.Component {
       {
         title: '🖼 rendering',
         children: [
+          <p>
+            We can use the following functions to convert the Virtual DOM into
+            real DOM Elements:
+          </p>,
           <Code language="javascript">
             {[
               `document.createElement('div');`,
@@ -102,7 +108,7 @@ export default class App extends React.Component {
         children: [
           <p>
             We know what the previous and next states are and we know what the
-            DOM currently looks
+            DOM currently looks like
           </p>,
           <p>
             We can "reconcile" the current state of the DOM to match what it
@@ -113,9 +119,64 @@ export default class App extends React.Component {
       {
         title: 'reconcileTree',
         children: [
+          <p>
+            In order to reconcile the old and new dom, we needed a way to
+            uniquely identify each element in the DOM.
+          </p>,
           <Code language="javascript">
-            {require('!!raw-loader!react/reconcile-tree').default}
+            {getFunction(
+              require('!!raw-loader!react/reconcile-tree').default,
+              'computeKey'
+            )}
           </Code>,
+          <p>
+            We handle added, removed, and changed children in all separate
+            cases.
+          </p>,
+        ],
+      },
+      {
+        title: 'reconcileTree',
+        children: [
+          <p>Handle removed children:</p>,
+          <Code language="javascript">
+            {getBlockAfter(
+              require('!!raw-loader!react/reconcile-tree').default,
+              '// handle removed'
+            )}
+          </Code>,
+        ],
+      },
+      {
+        title: 'reconcileTree',
+        children: [
+          <p>Handle added children:</p>,
+          <Code language="javascript">
+            {getBlockAfter(
+              require('!!raw-loader!react/reconcile-tree').default,
+              '// handle added'
+            )}
+          </Code>,
+        ],
+      },
+      {
+        title: 'reconcileTree',
+        children: [
+          <p>Handle changed children:</p>,
+          <Code language="javascript">
+            {getBlockAfter(
+              require('!!raw-loader!react/reconcile-tree').default,
+              '// handle changed'
+            )}
+          </Code>,
+        ],
+      },
+      {
+        title: 'thanks',
+        children: [
+          <Link to="https://github.com/nickav/react">
+            https://github.com/nickav/react
+          </Link>,
         ],
       },
     ];
