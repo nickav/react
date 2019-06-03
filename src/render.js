@@ -1,6 +1,12 @@
 import * as t from './types';
 import { updateElementProps } from './dom';
 
+export const getComponentProps = (vnode) => ({
+  ...(vnode.type.defaultProps || {}),
+  ...vnode.props,
+  children: vnode.children || props.children,
+});
+
 export const setRef = (vnode) => {
   if (vnode.props && vnode.props.ref) {
     vnode.props.ref(vnode._inst || vnode._dom);
@@ -13,12 +19,6 @@ export const dirtyRenderVNode = (vnode, nextVNode, renderNode) => {
   setRef(vnode);
   return vnode._dom;
 };
-
-export const getComponentProps = (vnode) => ({
-  ...(vnode.type.defaultProps || {}),
-  ...vnode.props,
-  children: vnode.children || props.children,
-});
 
 // vnode -> renderNode
 export const renderVNode = (vnode, renderNode) => {
@@ -40,8 +40,10 @@ export const renderVNode = (vnode, renderNode) => {
     _inst._vnode = vnode;
     vnode._inst = _inst;
 
-    _inst.componentWillMount();
-    setTimeout(() => _inst.componentDidMount(), 0);
+    if (renderNode === renderDOM) {
+      _inst.componentWillMount();
+      setTimeout(() => _inst.componentDidMount(), 0);
+    }
 
     return dirtyRenderVNode(
       vnode,
@@ -95,6 +97,34 @@ export const renderDOM = (vnode, render) => {
   return n;
 };
 
-export default (vnode, root) => {
+const renderString = (vnode, render) => {
+  if (t.isEmptyNode(vnode)) {
+    return '';
+  }
+
+  if (t.isTextNode(vnode)) {
+    return vnode;
+  }
+
+  if (t.isFragmentNode(vnode)) {
+    return vnode.map((e) => render(e, renderString)).join('\n');
+  }
+
+  const props = Object.keys(vnode.props)
+    .map((key) => `${key}="${vnode.props[key]}"`)
+    .join(' ');
+
+  const children = vnode.children
+    .map((child) => render(child, renderString))
+    .join('\n');
+
+  return `<${vnode.type} ${props}>${children}</${vnode.type}>`;
+};
+
+export const renderToString = (vnode) => renderVNode(vnode, renderString);
+
+const render = (vnode, root) => {
   root.appendChild(renderVNode(vnode, renderDOM));
 };
+
+export default render;

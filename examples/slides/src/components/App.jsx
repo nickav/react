@@ -22,9 +22,24 @@ export default class App extends React.Component {
           <Code language="html">{`<div><h1 style="color: red">Hello, world!</h1></div>`}</Code>,
           <p>
             <Link to="https://babeljs.io/">Babel</Link> transforms html tags in
-            JSX files into:
+            JSX files into (with preset-react):
           </p>,
           <Code language="javascript">{`createElement('div', null, createElement('h1', { style: 'color: red' }, 'Hello, world!'));`}</Code>,
+          <Code language="javascript">{`{
+  "type": "div",
+  "props": null,
+  "children": [
+    {
+      "type": "h1",
+      "props": {
+        "style": "color: red"
+      },
+      "children": [
+        "Hello, world!"
+      ]
+    }
+  ]
+}`}</Code>,
           <Link to="https://jasonformat.com/wtf-is-jsx/">
             https://jasonformat.com/wtf-is-jsx/
           </Link>,
@@ -48,6 +63,14 @@ export default class App extends React.Component {
         ],
       },
       {
+        title: 'render',
+        children: [
+          <Code language="javascript">
+            {require('!!raw-loader!react/render').default}
+          </Code>,
+        ],
+      },
+      {
         title: '🤔 updating the rendered html',
         children: [
           <ul>
@@ -61,41 +84,15 @@ export default class App extends React.Component {
       },
       {
         title: '✅ reconciling!',
-        children: [<div>We know what the previous and next states are...</div>],
-      },
-      {
-        title: 'demo',
-      },
-      {
-        title: 'React',
         children: [
-          <Code language="javascript">
-            {require('!!raw-loader!react/React').default}
-          </Code>,
-        ],
-      },
-      {
-        title: 'types',
-        children: [
-          <Code language="javascript">
-            {require('!!raw-loader!react/types').default}
-          </Code>,
-        ],
-      },
-      {
-        title: 'render',
-        children: [
-          <Code language="javascript">
-            {require('!!raw-loader!react/render').default}
-          </Code>,
-        ],
-      },
-      {
-        title: 'Component',
-        children: [
-          <Code language="javascript">
-            {require('!!raw-loader!react/Component').default}
-          </Code>,
+          <p>
+            We know what the previous and next states are and we know what the
+            DOM currently looks
+          </p>,
+          <p>
+            We can "reconcile" the current state of the DOM to match what it
+            should look like
+          </p>,
         ],
       },
       {

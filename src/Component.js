@@ -31,7 +31,7 @@ export default class Component {
   };
 
   getRef() {
-    return this._vnode._dom;
+    return this._vnode && this._vnode._dom;
   }
 
   // lifecycle methods

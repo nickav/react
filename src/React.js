@@ -1,5 +1,5 @@
 export { default as Component } from './Component';
-export { default as render } from './render';
+export { default as render, renderToString } from './render';
 export { default as PureComponent } from './PureComponent';
 export { bindListeners } from './dom';
 export { isValidElement } from './types';
