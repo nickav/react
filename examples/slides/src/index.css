@@ -11,7 +11,3 @@ html, body {
 html, body, #app, .App {
   height: 100%;
 }
-
-ul {
-  text-align: left;
-}

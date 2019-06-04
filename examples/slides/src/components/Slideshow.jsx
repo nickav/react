@@ -10,7 +10,7 @@ export class Slide extends React.Component {
   render() {
     const { children } = this.props;
 
-    return <div class="slide">{children}</div>;
+    return <div class="Slide">{children}</div>;
   }
 }
 
@@ -65,7 +65,7 @@ export default class Slideshow extends React.Component {
     const { slides } = this.props;
     const Slide = slides[index];
     return (
-      <div class="slideshow">
+      <div class="Slideshow">
         {React.isValidElement(Slide) ? Slide : <Slide key={`slide-${index}`} />}
       </div>
     );

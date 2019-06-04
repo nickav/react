@@ -110,7 +110,7 @@ const renderString = (vnode, render) => {
     return vnode.map((e) => render(e, renderString)).join('\n');
   }
 
-  const props = Object.keys(vnode.props)
+  const props = Object.keys(vnode.props || {})
     .map((key) => `${key}="${vnode.props[key]}"`)
     .join(' ');
 

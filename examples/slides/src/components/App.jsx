@@ -10,9 +10,18 @@ export default class App extends React.Component {
     const slides = [
       {
         title: '⚛ react from scratch',
+        children: [<p>by anushri, alan and nick</p>],
       },
       {
-        title: 'by anushri, alan and nick',
+        title: 'What is React?',
+        children: [
+          <p>An abstraction around DOM manipulations</p>,
+          <p>
+            Makes reasoning about state changes easier than manually{' '}
+            <span style="color: green;">adding</span> and{' '}
+            <span style="color: red;">removing</span> things to the page
+          </p>,
+        ],
       },
       {
         title: 'WTF is JSX?',
@@ -94,12 +103,10 @@ export default class App extends React.Component {
       {
         title: '🤔 updating the rendered html',
         children: [
-          <ul>
-            <li>re-render the entire page after any change</li>
-            <li>
-              use window.requestAnimationFrame to render and wait for changes
-            </li>
-          </ul>,
+          <p>• re-render the entire page after any change</p>,
+          <p>
+            • use window.requestAnimationFrame to render and wait for changes
+          </p>,
           <div>¯\_(ツ)_/¯</div>,
         ],
       },
@@ -107,12 +114,8 @@ export default class App extends React.Component {
         title: '✅ reconciling!',
         children: [
           <p>
-            We know what the previous and next states are and we know what the
-            DOM currently looks like
-          </p>,
-          <p>
-            We can "reconcile" the current state of the DOM to match what it
-            should look like
+            We can "reconcile" the current state of the DOM to match what the
+            updated VDOM is
           </p>,
         ],
       },
@@ -172,7 +175,7 @@ export default class App extends React.Component {
         ],
       },
       {
-        title: 'thanks',
+        title: 't.hanks',
         children: [
           <Link to="https://github.com/nickav/react">
             https://github.com/nickav/react

@@ -1,4 +1,4 @@
-.slideshow {
+.Slideshow {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,14 +6,14 @@
   padding: 20px;
 }
 
-.slide {
+.Slide {
   text-align: center;
   width: 100%;
   max-width: 800px;
   max-height: 100%;
 }
 
-.slide .title {
+.Slide .title {
   font-size: 24px;
   margin-bottom: 20px;
 }
