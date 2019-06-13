@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Link from './Link';
+import Thanks from './Thanks';
 import Slideshow, { Slide } from './Slideshow';
 import Code from './Code';
 import { getFunction, getBlockAfter } from '../helpers/functions';
@@ -175,12 +176,7 @@ export default class App extends React.Component {
         ],
       },
       {
-        title: 't.hanks',
-        children: [
-          <Link to="https://github.com/nickav/react">
-            https://github.com/nickav/react
-          </Link>,
-        ],
+        children: [<Thanks />],
       },
     ];
 
